@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion - SIRH</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f2f2f2; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .login-box { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 300px; }
+        .login-box h2 { text-align: center; margin-bottom: 20px; }
+        .login-box form { display: flex; flex-direction: column; }
+        .login-box input { margin-bottom: 15px; padding: 10px; font-size: 14px; }
+        .login-box button { padding: 10px; background: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+        .login-box button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h2>Connexion</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Se connecter</button>
+        </form>
+        {% if form.errors %}
+            <p style="color:red; font-size:12px;">Nom d'utilisateur ou mot de passe incorrect.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

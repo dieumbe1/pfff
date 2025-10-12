@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des Congés{% endblock %}
+
+{% block content %}
+    <h1>Liste des Demandes de Congés</h1>
+    <a href="{% url 'ajouter_conge' %}" class="btn-primary">Demander un Congé</a>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Employé</th>
+                <th>Dates</th>
+                <th>Motif</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in conges %}
+            <tr>
+                <td>{{ item.employe.user.get_full_name }}</td>
+                <td>{{ item.date_debut }} à {{ item.date_fin }}</td>
+                <td>{{ item.motif|truncatechars:50 }}</td>
+                <td>{{ item.get_statut_display }}</td>
+                <td>
+                    <a href="{% url 'modifier_conge' item.pk %}" class="btn-secondary">Gérer</a> 
+                </td>
+            </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">Aucune demande de congé en attente.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

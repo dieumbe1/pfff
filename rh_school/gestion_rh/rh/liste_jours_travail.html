@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des Jours de Travail{% endblock %}
+
+{% block content %}
+    <h1>Jours de Travail et Horaires</h1>
+    <a href="{% url 'ajouter_jour_travail' %}" class="btn-primary">Ajouter une Règle d'Horaire</a>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Jour de la semaine</th>
+                <th>Heure Début</th>
+                <th>Heure Fin</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in jours_travail %}
+            <tr>
+                <td>{{ item.get_jour_semaine_display }}</td>
+                <td>{{ item.heure_debut }}</td>
+                <td>{{ item.heure_fin }}</td>
+                <td>
+                    <a href="{% url 'modifier_jour_travail' item.pk %}" class="btn-secondary">Modifier</a> 
+                    <a href="{% url 'supprimer_jour_travail' item.pk %}" class="btn-danger">Supprimer</a>
+                </td>
+            </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">Aucun horaire de travail n'est défini.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

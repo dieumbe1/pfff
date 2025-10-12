@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Liste des Jours de Travail{% endblock %}
+
+{% block content %}
+
+<h1>Jours de Travail</h1>
+<a href="{% url 'ajouter_jour_travail' %}" class="btn-primary">+ Ajouter un Jour</a>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Employé</th>
+            <th>Date</th>
+            <th>Heures travaillées</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for jour in jours %}
+        <tr>
+            <td>{{ jour.employe.nom }} {{ jour.employe.prenom }}</td>
+            <td>{{ jour.date }}</td>
+            <td>{{ jour.heures_travaillees }}</td>
+            <td>
+                <a href="{% url 'modifier_jour_travail' jour.pk %}" class="btn-secondary">Modifier</a>
+                <a href="{% url 'supprimer_jour_travail' jour.pk %}" class="btn-danger">Supprimer</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">Aucun jour enregistré.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

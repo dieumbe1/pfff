@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Liste des Employés{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <h1>Liste des Employés</h1>
+
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Poste</th>
+                <th>Département</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employe in employes %}
+            <tr>
+                <td>{{ employe.id }}</td>
+                <td>{{ employe.nom }}</td>
+                <td>{{ employe.prenom }}</td>
+                <td>{{ employe.poste }}</td>
+                <td>{{ employe.departement.nom }}</td>
+                <td>
+                    <a href="{% url 'modifier_employe' employe.id %}" class="btn btn-edit">Modifier</a>
+                    <a href="{% url 'supprimer_employe' employe.id %}" class="btn btn-delete">Supprimer</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align:center;">Aucun employé trouvé.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="btn-container" style="margin-top: 20px;">
+        <a href="{% url 'ajouter_employe' %}" class="btn btn-add">Ajouter un employé</a>
+    </div>
+</div>
+{% endblock %}

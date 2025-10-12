@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des Salaires{% endblock %}
+
+{% block content %}
+    <h1>Historique des Salaires</h1>
+    <a href="{% url 'ajouter_salaire' %}" class="btn-primary">Enregistrer un Nouveau Salaire</a>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Employé</th>
+                <th>Montant</th>
+                <th>Date d'effet</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in salaires %}
+            <tr>
+                <td>{{ item.employe.user.get_full_name }}</td>
+                <td>{{ item.montant|floatformat:2 }} €</td>
+                <td>{{ item.date_effet }}</td>
+                <td>
+                    <a href="{% url 'modifier_salaire' item.pk %}" class="btn-secondary">Modifier</a> 
+                    <a href="{% url 'supprimer_salaire' item.pk %}" class="btn-danger">Supprimer</a>
+                </td>
+            </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">Aucun enregistrement de salaire trouvé.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des Employés{% endblock %}
+
+{% block content %}
+    <h1>Liste Complète des Employés</h1>
+    <a href="{% url 'ajouter_employe' %}" class="btn-primary">Ajouter un Nouvel Employé</a>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Matricule</th>
+                <th>Nom Complet</th>
+                <th>Département</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in employes %}
+            <tr>
+                <td>{{ item.matricule }}</td>
+                <td>{{ item.user.first_name }} {{ item.user.last_name }}</td>
+                <td>{{ item.departement.nom|default:"Non assigné" }}</td>
+                <td>
+                    <a href="{% url 'modifier_employe' item.pk %}" class="btn-secondary">Modifier</a> 
+                    <a href="{% url 'supprimer_employe' item.pk %}" class="btn-danger">Supprimer</a>
+                </td>
+            </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">Aucun employé n'est encore enregistré.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Mon Dossier{% endblock %}
+
+{% block content %}
+<h2>Mon Dossier Personnel</h2>
+<ul>
+    <li>Matricule : {{ employe.matricule }}</li>
+    <li>Nom : {{ employe.nom }}</li>
+    <li>Prénom : {{ employe.prenom }}</li>
+    <li>Email : {{ employe.email }}</li>
+    <li>Téléphone : {{ employe.telephone }}</li>
+    <li>Adresse : {{ employe.adresse }}</li>
+    <li>Département : {{ employe.departement.nom }}</li>
+    <li>Date d'embauche : {{ employe.date_embauche }}</li>
+</ul>
+{% endblock %}

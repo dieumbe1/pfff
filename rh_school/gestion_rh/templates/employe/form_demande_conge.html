@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ titre }}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>{{ titre }}</h1>
+
+    <!-- Affichage du formulaire de demande de congé -->
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Envoyer la demande</button>
+    </form>
+
+    <p>
+        <a href="{% url 'mes_conges' %}">Voir mes congés</a> |
+        <a href="{% url 'accueil' %}">Retour à l'accueil</a>
+    </p>
+</body>
+</html>

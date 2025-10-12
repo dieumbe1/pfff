@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Accueil - Gestion RH</title>
+
+    <!-- Feuille de style principale -->
+    <link rel="stylesheet" href="{% static 'gestion_rh/css/style.css' %}" />
+
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+</head>
+<body>
+
+<!-- ========== EN-TÊTE ========== -->
+<header>
+    <nav class="main-nav">
+        <div class="nav-links">
+            <!-- Lien Accueil avec une flèche -->
+            <a href="{% url 'accueil' %}" class="active">
+                <i class="fas fa-angle-right"></i> Accueil
+            </a>
+
+            {% if user.is_authenticated %}
+                <!-- Déconnexion avec icône -->
+                <a href="{% url 'logout' %}">
+                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                </a>
+            {% else %}
+                <!-- Connexion avec icône -->
+                <a href="{% url 'login' %}">
+                    <i class="fas fa-sign-in-alt"></i> Connexion
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+
+<!-- ========== CONTENU PRINCIPAL ========== -->
+<main class="accueil-content">
+    <h1>Bienvenue sur la plateforme de Gestion RH</h1>
+
+    {% if user.is_authenticated %}
+        <div class="dashboard-grid">
+
+            {% if user.is_staff %}
+                <!-- Espace RH -->
+                <a href="{% url 'dashboard_rh' %}" class="feature-tile">
+                    <i class="fas fa-user-tie tile-icon"></i>
+                    <h2 class="tile-title">Responsable RH</h2>
+                    <p class="tile-description">Espace du responsable RH</p>
+                </a>
+
+                <a href="{% url 'liste_employes' %}" class="feature-tile">
+                    <i class="fas fa-users tile-icon"></i>
+                    <h2 class="tile-title">Employés</h2>
+                    <p class="tile-description">Gérer les employés</p>
+                </a>
+
+                <a href="{% url 'liste_departements' %}" class="feature-tile">
+                    <i class="fas fa-building tile-icon"></i>
+                    <h2 class="tile-title">Départements</h2>
+                    <p class="tile-description">Gérer les départements</p>
+                </a>
+
+                <a href="{% url 'liste_formations' %}" class="feature-tile">
+                    <i class="fas fa-graduation-cap tile-icon"></i>
+                    <h2 class="tile-title">Formations</h2>
+                    <p class="tile-description">Gérer les formations</p>
+                </a>
+
+                <a href="{% url 'liste_conges' %}" class="feature-tile">
+                    <i class="fas fa-calendar-alt tile-icon"></i>
+                    <h2 class="tile-title">Congés</h2>
+                    <p class="tile-description">Gérer les congés</p>
+                </a>
+
+                <a href="{% url 'liste_contrats' %}" class="feature-tile">
+                    <i class="fas fa-file-signature tile-icon"></i>
+                    <h2 class="tile-title">Contrats</h2>
+                    <p class="tile-description">Gérer les contrats</p>
+                </a>
+
+                <a href="{% url 'liste_salaires' %}" class="feature-tile">
+                    <i class="fas fa-money-bill-wave tile-icon"></i>
+                    <h2 class="tile-title">Salaires</h2>
+                    <p class="tile-description">Gérer les salaires</p>
+                </a>
+
+                <a href="{% url 'liste_jours_travail' %}" class="feature-tile">
+                    <i class="fas fa-clock tile-icon"></i>
+                    <h2 class="tile-title">Jours de Travail</h2>
+                    <p class="tile-description">Gérer les jours de travail</p>
+                </a>
+            {% else %}
+                <!-- Espace Employé -->
+                <a href="{% url 'dashboard_employe' %}" class="feature-tile">
+                    <i class="fas fa-user-circle tile-icon"></i>
+                    <h2 class="tile-title">Mon Espace Employé</h2>
+                    <p class="tile-description">Tableau de bord</p>
+                </a>
+
+                <a href="{% url 'compte' %}" class="feature-tile">
+                    <i class="fas fa-user tile-icon"></i>
+                    <h2 class="tile-title">Mon Compte</h2>
+                    <p class="tile-description">Modifier mes infos</p>
+                </a>
+
+                <a href="{% url 'mon_dossier' %}" class="feature-tile">
+                    <i class="fas fa-folder-open tile-icon"></i>
+                    <h2 class="tile-title">Mon Dossier</h2>
+                    <p class="tile-description">Voir mon dossier RH</p>
+                </a>
+            {% endif %}
+        </div>
+    {% else %}
+        <p>Veuillez vous connecter pour accéder à votre espace RH ou Employé.</p>
+        <a href="{% url 'login' %}" class="btn-primary">Se Connecter</a>
+    {% endif %}
+</main>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Liste des Congés{% endblock %}
+
+{% block content %}
+
+<h1>Liste des Congés</h1>
+<a href="{% url 'ajouter_conge' %}" class="btn-primary">+ Nouveau Congé</a>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Employé</th>
+            <th>Date début</th>
+            <th>Date fin</th>
+            <th>Statut</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for conge in conges %}
+        <tr>
+            <td>{{ conge.employe.nom }} {{ conge.employe.prenom }}</td>
+            <td>{{ conge.date_debut }}</td>
+            <td>{{ conge.date_fin }}</td>
+            <td>{{ conge.statut }}</td>
+            <td>
+                <a href="{% url 'modifier_conge' conge.pk %}" class="btn-secondary">Modifier</a>
+                <a href="{% url 'supprimer_conge' conge.pk %}" class="btn-danger">Supprimer</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">Aucun congé trouvé.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

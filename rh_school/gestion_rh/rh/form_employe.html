@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter/Modifier Employé{% endblock %}
+
+{% block content %}
+    <h1>{% if form.instance.pk %}Modifier{% else %}Ajouter{% endif %} un Employé</h1>
+    
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            
+            {{ form.as_p }} 
+
+            <button type="submit" class="btn-submit">{% if form.instance.pk %}Sauvegarder les Modifications{% else %}Ajouter l'Employé{% endif %}</button>
+        </form>
+    </div>
+    
+    <p><a href="{% url 'liste_employes' %}">Retour à la Liste</a></p>
+{% endblock %}

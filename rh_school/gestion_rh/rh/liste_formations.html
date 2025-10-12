@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des Formations{% endblock %}
+
+{% block content %}
+    <h1>Catalogue des Formations</h1>
+    <a href="{% url 'ajouter_formation' %}" class="btn-primary">Ajouter une Nouvelle Formation</a>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Durée (heures)</th>
+                <th>Coût</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in formations %}
+            <tr>
+                <td>{{ item.titre }}</td>
+                <td>{{ item.duree_heures }}</td>
+                <td>{{ item.cout|floatformat:2 }} €</td>
+                <td>
+                    <a href="{% url 'modifier_formation' item.pk %}" class="btn-secondary">Modifier</a> 
+                    <a href="{% url 'supprimer_formation' item.pk %}" class="btn-danger">Supprimer</a>
+                </td>
+            </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">Aucune formation n'est enregistrée.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

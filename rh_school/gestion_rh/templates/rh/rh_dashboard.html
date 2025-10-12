@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de bord RH{% endblock %}
+
+{% block content %}
+<h1>Bienvenue {{ user.first_name }} (Responsable RH)</h1>
+<p>Vous pouvez gérer les ressources humaines depuis ce tableau de bord.</p>
+
+<ul>
+    <li><a href="{% url 'liste_employes' %}">Gérer les employés</a></li>
+    <li><a href="{% url 'liste_departements' %}">Gérer les départements</a></li>
+    <li><a href="{% url 'liste_formations' %}">Gérer les formations</a></li>
+    <li><a href="{% url 'liste_conges' %}">Valider les demandes de congé</a></li>
+    <li><a href="{% url 'liste_contrats' %}">Gérer les contrats</a></li>
+    <li><a href="{% url 'liste_salaires' %}">Gérer les salaires</a></li>
+    <li><a href="{% url 'liste_jours_travail' %}">Gérer les jours de travail</a></li>
+    <li><a href="{% url 'compte' %}">Mon compte</a></li>
+</ul>
+{% endblock %}

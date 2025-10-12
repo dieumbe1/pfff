@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Mes Congés</h1>
+
+{% if conges %}
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Date de début</th>
+            <th>Date de fin</th>
+            <th>Type de congé</th>
+            <th>Statut</th>
+            <th>Commentaire RH</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for conge in conges %}
+        <tr>
+            <td>{{ conge.id }}</td>
+            <td>{{ conge.date_debut }}</td>
+            <td>{{ conge.date_fin }}</td>
+            <td>{{ conge.type_conge }}</td>
+            <td>{{ conge.statut }}</td>
+            <td>{{ conge.commentaire }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Vous n'avez encore soumis aucun congé.</p>
+{% endif %}
+
+<a href="{% url 'demander_conge' %}">Faire une nouvelle demande de congé</a>
+{% endblock %}

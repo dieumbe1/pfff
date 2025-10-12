@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Liste des Salaires{% endblock %}
+
+{% block content %}
+
+<h1>Liste des Salaires</h1>
+<a href="{% url 'ajouter_salaire' %}" class="btn-primary">+ Nouveau Salaire</a>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Employé</th>
+            <th>Mois</th>
+            <th>Montant</th>
+            <th>Date de paiement</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for salaire in salaires %}
+        <tr>
+            <td>{{ salaire.employe.nom }} {{ salaire.employe.prenom }}</td>
+            <td>{{ salaire.mois }}</td>
+            <td>{{ salaire.montant }}</td>
+            <td>{{ salaire.date_paiement }}</td>
+            <td>
+                <a href="{% url 'modifier_salaire' salaire.pk %}" class="btn-secondary">Modifier</a>
+                <a href="{% url 'supprimer_salaire' salaire.pk %}" class="btn-danger">Supprimer</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">Aucun salaire enregistré.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

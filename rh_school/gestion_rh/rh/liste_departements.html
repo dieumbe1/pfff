@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des Départements{% endblock %}
+
+{% block content %}
+    <h1>Liste des Départements</h1>
+    <a href="{% url 'ajouter_departement' %}" class="btn-primary">Ajouter un Nouveau Département</a>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Responsable</th>
+                <th>Nombre d'employés</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in departements %}
+            <tr>
+                <td>{{ item.nom }}</td>
+                <td>{{ item.responsable.user.get_full_name|default:"Non assigné" }}</td>
+                <td>{{ item.employe_set.count }}</td>
+                <td>
+                    <a href="{% url 'modifier_departement' item.pk %}" class="btn-secondary">Modifier</a> 
+                    <a href="{% url 'supprimer_departement' item.pk %}" class="btn-danger">Supprimer</a>
+                </td>
+            </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">Aucun département n'est enregistré.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
