@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Détail du Département - {{ departement.nom }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- En-tête -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-1">Détail du Département</h1>
+                    <p class="text-muted mb-0">{{ departement.nom }}</p>
+                </div>
+                <div>
+                    <a href="{% url 'liste_departements' %}" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-arrow-left me-2"></i>Retour à la liste
+                    </a>
+                    <a href="{% url 'modifier_departement' departement.pk %}" class="btn btn-warning">
+                        <i class="fas fa-edit me-2"></i>Modifier
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Informations du département -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-building me-2"></i>Informations du Département
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Nom du département</label>
+                            <p class="mb-0">{{ departement.nom }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Budget annuel</label>
+                            <p class="mb-0 h5 text-success">{{ departement.budget_annuel|floatformat:0 }} €</p>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label fw-semibold">Description</label>
+                            <p class="mb-0">{{ departement.description }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Nombre d'employés</label>
+                            <p class="mb-0">
+                                <span class="badge bg-info">{{ departement.nombre_employes }}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-cogs me-2"></i>Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'modifier_departement' departement.pk %}" class="btn btn-warning">
+                            <i class="fas fa-edit me-2"></i>Modifier le département
+                        </a>
+                        <a href="{% url 'supprimer_departement' departement.pk %}" class="btn btn-danger">
+                            <i class="fas fa-trash me-2"></i>Supprimer le département
+                        </a>
+                        <a href="{% url 'liste_departements' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Retour à la liste
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Supprimer l'employé{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Confirmer la suppression
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-person-x display-1 text-danger"></i>
+                    </div>
+                    <p class="text-center mb-4">
+                        Êtes-vous sûr de vouloir supprimer l'employé 
+                        <strong>{{ employe.get_full_name }}</strong> ?
+                    </p>
+                    <p class="text-danger text-center small">
+                        Cette action est irréversible et supprimera toutes les données associées.
+                    </p>
+                    
+                    <form method="POST" class="text-center">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger me-2">
+                            <i class="bi bi-trash me-1"></i> Supprimer définitivement
+                        </button>
+                        <a href="{% url 'liste_employes' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Annuler
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

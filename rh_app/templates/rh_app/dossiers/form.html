@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{# {% load widget_tweaks %} #}
+
+{% block title %}{{ action }} un Dossier{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ action }} un Dossier</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.employe.id_for_label }}">Employé</label>
+                                    {{ form.employe|add_class:"form-control" }}
+                                    {% if form.employe.errors %}
+                                        <div class="text-danger">{{ form.employe.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.type_document.id_for_label }}">Type de Document</label>
+                                    {{ form.type_document|add_class:"form-control" }}
+                                    {% if form.type_document.errors %}
+                                        <div class="text-danger">{{ form.type_document.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="{{ form.titre.id_for_label }}">Titre du Document</label>
+                                    {{ form.titre|add_class:"form-control" }}
+                                    {% if form.titre.errors %}
+                                        <div class="text-danger">{{ form.titre.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="{{ form.description.id_for_label }}">Description</label>
+                                    {{ form.description|add_class:"form-control" }}
+                                    {% if form.description.errors %}
+                                        <div class="text-danger">{{ form.description.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.document.id_for_label }}">Document</label>
+                                    {{ form.document|add_class:"form-control" }}
+                                    {% if form.document.errors %}
+                                        <div class="text-danger">{{ form.document.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.date_expiration.id_for_label }}">Date d'Expiration</label>
+                                    {{ form.date_expiration|add_class:"form-control" }}
+                                    {% if form.date_expiration.errors %}
+                                        <div class="text-danger">{{ form.date_expiration.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="form-check">
+                                        {{ form.confidentiel|add_class:"form-check-input" }}
+                                        <label class="form-check-label" for="{{ form.confidentiel.id_for_label }}">
+                                            Document Confidentiel
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> {{ action }}
+                            </button>
+                            <a href="{% url 'liste_dossiers_personnel' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,9 +1,47 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <div class="container py-4">
-    <h2>Liste</h2>
-    <div class="card"><div class="card-body">
-        <p>Liste des éléments ici</p>
-    </div></div>
+    <h2 class="mb-4">Liste des présences</h2>
+
+    {% if presences %}
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    {% if user.employe.role == 'RH' %}
+                    <th>Employé</th>
+                    {% endif %}
+                    <th>Date</th>
+                    <th>Heure d'arrivée</th>
+                    <th>Heure de départ</th>
+                    <th>Statut</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for presence in presences %}
+                <tr>
+                    {% if user.employe.role == 'RH' %}
+                    <td>{{ presence.employe.get_full_name }}</td>
+                    {% endif %}
+                    <td>{{ presence.date|date:"d/m/Y" }}</td>
+                    <td>{{ presence.heure_arrivee|default:"-" }}</td>
+                    <td>{{ presence.heure_depart|default:"-" }}</td>
+                    <td>{{ presence.get_statut_display }}</td>
+                    <td>{{ presence.note|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="alert alert-info">Aucune présence enregistrée.</div>
+    {% endif %}
+
+    {% if user.employe.role == 'RH' %}
+    <a href="{% url 'ajouter_presence' %}" class="btn btn-primary mt-3">Ajouter une présence</a>
+    {% endif %}
 </div>
 {% endblock %}
+

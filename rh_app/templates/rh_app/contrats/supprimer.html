@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Supprimer le Contrat - {{ contrat.employe.get_full_name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Confirmer la suppression
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Attention !</strong> Cette action est irréversible.
+                    </div>
+                    
+                    <p class="mb-4">Êtes-vous sûr de vouloir supprimer le contrat de <strong>{{ contrat.employe.get_full_name }}</strong> ?</p>
+                    
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h6 class="card-title">Détails du contrat à supprimer :</h6>
+                            <ul class="list-unstyled mb-0">
+                                <li><strong>Type :</strong> {{ contrat.get_type_contrat_display }}</li>
+                                <li><strong>Poste :</strong> {{ contrat.poste }}</li>
+                                <li><strong>Département :</strong> {{ contrat.departement }}</li>
+                                <li><strong>Période :</strong> {{ contrat.date_debut|date:"d/m/Y" }} 
+                                    {% if contrat.date_fin %}au {{ contrat.date_fin|date:"d/m/Y" }}{% else %}(Permanent){% endif %}</li>
+                                <li><strong>Salaire :</strong> {{ contrat.salaire_base }} € / mois</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'liste_contrats' %}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Annuler
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash me-2"></i>Supprimer définitivement
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

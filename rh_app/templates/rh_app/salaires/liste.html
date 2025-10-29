@@ -1,9 +1,269 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gestion des Salaires - RH{% endblock %}
+
 {% block content %}
-<div class="container py-4">
-    <h2>Liste</h2>
-    <div class="card"><div class="card-body">
-        <p>Liste des éléments ici</p>
-    </div></div>
+<div class="container-fluid py-4">
+    <!-- En-tête simple -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-1">Gestion des Salaires</h1>
+                    <p class="text-muted mb-0">Consultez et gérez l'ensemble des fiches de paie</p>
+                </div>
+                {% if user.employe.role == 'RH' %}
+                <a href="{% url 'ajouter_salaire' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>Nouvelle Fiche de Paie
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Message d'information pour les employés -->
+    {% if not user.employe.role == 'RH' %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <div class="mb-4">
+                        <i class="bi bi-info-circle display-1 text-info"></i>
+                    </div>
+                    <h4>Accès à vos fiches de paie</h4>
+                    <p class="text-muted mb-4">
+                        Bonjour {{ user.employe.get_full_name }},<br>
+                        Vos fiches de paie sont disponibles auprès du service RH. Pour y accéder ou pour toute question :<br>
+                    </p>
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="list-group text-start mb-4">
+                                <div class="list-group-item">
+                                    <i class="bi bi-envelope-paper me-2 text-primary"></i>
+                                    <strong>Demande de fiche de paie :</strong> Envoyez un email au service RH
+                                </div>
+                                <div class="list-group-item">
+                                    <i class="bi bi-clock me-2 text-primary"></i>
+                                    <strong>Délai :</strong> Réponse sous 24-48h ouvrées
+                                </div>
+                                <div class="list-group-item">
+                                    <i class="bi bi-shield-check me-2 text-primary"></i>
+                                    <strong>Confidentialité :</strong> Envoi sécurisé par email professionnel
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mb-0">
+                        <a href="mailto:rh@entreprise.com" class="btn btn-primary">
+                            <i class="bi bi-envelope me-2"></i>Contacter le service RH
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Tableau des salaires (visible uniquement pour les RH) -->
+    {% if user.employe.role == 'RH' %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-cash-stack me-2"></i>Liste des Salaires
+                    </h5>
+                    <span class="badge bg-primary">{{ salaires|length }} fiche(s) de paie</span>
+                </div>
+                <div class="card-body p-0">
+                    {% if salaires %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">
+                                            <i class="bi bi-person me-2"></i>Employé
+                                        </th>
+                                        <th>
+                                            <i class="bi bi-building me-2"></i>Département
+                                        </th>
+                                        <th>
+                                            <i class="bi bi-calendar-month me-2"></i>Mois
+                                        </th>
+                                        <th>
+                                            <i class="bi bi-cash-coin me-2"></i>Montant
+                                        </th>
+                                        <th>
+                                            <i class="bi bi-calendar-check me-2"></i>Date de paiement
+                                        </th>
+                                        <th>
+                                            <i class="bi bi-tags me-2"></i>Statut
+                                        </th>
+                                        {% if user.employe.role == 'RH' %}
+                                        <th class="text-end pe-4">
+                                            <i class="bi bi-gear me-2"></i>Actions
+                                        </th>
+                                        {% endif %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for salaire in salaires %}
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0">
+                                                    {% if salaire.employe.photo %}
+                                                    <img src="{{ salaire.employe.photo.url }}" 
+                                                         alt="{{ salaire.employe.get_full_name }}"
+                                                         class="rounded-circle me-3" width="40" height="40"
+                                                         style="object-fit: cover;">
+                                                    {% else %}
+                                                    <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                                         style="width: 40px; height: 40px;">
+                                                        <span class="text-white small">
+                                                            {{ salaire.employe.get_full_name|first|upper }}
+                                                        </span>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-1 fw-semibold">{{ salaire.employe.get_full_name }}</h6>
+                                                    <small class="text-muted">{{ salaire.employe.poste }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light text-dark">
+                                                {{ salaire.employe.departement }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="text-nowrap">
+                                                <div class="fw-semibold">{{ salaire.mois|date:"F Y" }}</div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold text-success">
+                                                {{ salaire.montant }} FCFA
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-nowrap">
+                                                <div class="fw-medium">{{ salaire.date_paiement|date:"d/m/Y" }}</div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge 
+                                                {% if salaire.statut == 'PAYE' %}bg-success
+                                                {% elif salaire.statut == 'EN_ATTENTE' %}bg-warning
+                                                {% elif salaire.statut == 'ANNULE' %}bg-danger
+                                                {% else %}bg-secondary{% endif %}">
+                                                <i class="bi 
+                                                    {% if salaire.statut == 'PAYE' %}bi-check-circle
+                                                    {% elif salaire.statut == 'EN_ATTENTE' %}bi-clock
+                                                    {% elif salaire.statut == 'ANNULE' %}bi-x-circle
+                                                    {% else %}bi-question-circle{% endif %} me-1"></i>
+                                                {{ salaire.get_statut_display }}
+                                            </span>
+                                        </td>
+                                        {% if user.employe.role == 'RH' %}
+                                        <td class="text-end pe-4">
+                                            <div class="btn-group">
+                                                <a href="#" 
+                                                   class="btn btn-sm btn-outline-warning"
+                                                   data-bs-toggle="tooltip" title="Modifier">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <span class="visually-hidden">Actions</span>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li>
+                                                        <a class="dropdown-item" href="#">
+                                                            <i class="bi bi-file-pdf me-2"></i>Générer bulletin
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="#">
+                                                            <i class="bi bi-envelope me-2"></i>Envoyer par email
+                                                        </a>
+                                                    </li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    {% if salaire.statut != 'PAYE' %}
+                                                    <li>
+                                                        <a class="dropdown-item text-success" href="#">
+                                                            <i class="bi bi-check-circle me-2"></i>Marquer comme payé
+                                                        </a>
+                                                    </li>
+                                                    {% endif %}
+                                                    <li>
+                                                        <a class="dropdown-item text-danger" href="#">
+                                                            <i class="bi bi-trash me-2"></i>Supprimer
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <div class="mb-4">
+                                <i class="bi bi-cash-stack display-1 text-muted"></i>
+                            </div>
+                            <h5 class="text-muted">Aucune fiche de paie trouvée</h5>
+                            <p class="text-muted mb-4">Commencez par créer votre première fiche de paie</p>
+                            {% if user.employe.role == 'RH' %}
+                            <a href="{% url 'ajouter_salaire' %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-2"></i>Créer une fiche de paie
+                            </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}  <!-- ⬅️ CORRECTION : Cette balise endif manquait -->
 </div>
+
+<!-- Styles personnalisés -->
+<style>
+.card {
+    border: none;
+    border-radius: 12px;
+}
+.table th {
+    border-top: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+}
+.table td {
+    vertical-align: middle;
+    padding: 1rem 0.75rem;
+}
+.badge {
+    font-weight: 500;
+}
+</style>
+
+<!-- Script pour les tooltips -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+});
+</script>
 {% endblock %}

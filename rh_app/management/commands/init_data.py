@@ -39,7 +39,7 @@ class Command(BaseCommand):
         if not User.objects.filter(username='employe1').exists():
             emp_user = User.objects.create_user(
                 username='employe1',
-                email='jean.dupont@entreprise.com',
+                email='jean.dupont@ecole.com',
                 password='employe123',
                 first_name='Jean',
                 last_name='Dupont'
@@ -51,7 +51,7 @@ class Command(BaseCommand):
                 role='EMPLOYE',
                 nom='Dupont',
                 prenom='Jean',
-                email='jean.dupont@entreprise.com',
+                email='jean.dupont@ecole.com',
                 telephone='0612345678',
                 adresse='10 avenue des Champs, 75008 Paris',
                 date_naissance=date(1990, 3, 20),
@@ -77,9 +77,7 @@ class Command(BaseCommand):
                 mois=10,
                 annee=2025,
                 salaire_base=Decimal('3500.00'),
-                primes=Decimal('200.00'),
-                deductions=Decimal('500.00'),
-                salaire_net=Decimal('3200.00'),
+                salaire_net=Decimal('3500.00'),
                 date_paiement=date(2025, 10, 30)
             )
         

@@ -2,15 +2,41 @@
 {% block content %}
 <div class="container py-4">
     <h2>Traiter le congé</h2>
-    <div class="card"><div class="card-body">
-        <form method="post">
-            {% csrf_token %}
-            <p>Employé: {{ conge.employe.get_full_name }}</p>
-            <p>Type: {{ conge.get_type_conge_display }}</p>
-            <textarea name="commentaire" class="form-control mb-2" placeholder="Commentaire"></textarea>
-            <button type="submit" name="action" value="APPROUVE" class="btn btn-success">Approuver</button>
-            <button type="submit" name="action" value="REFUSE" class="btn btn-danger">Refuser</button>
-        </form>
-    </div></div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title">{{ conge.employe.get_full_name }}</h5>
+            <p class="card-text"><strong>Type de congé :</strong> {{ conge.get_type_conge_display }}</p>
+            <p class="card-text"><strong>Période :</strong> {{ conge.date_debut }} à {{ conge.date_fin }} ({{ conge.nombre_jours }} jours{% if conge.nombre_jours and conge.nombre_jours > 30 %}, ≈ {{ conge.nombre_jours|floatformat:0|divisibleby:30|yesno:"1,0" }} mois{% endif %})</p>
+            <p class="card-text"><strong>Motif :</strong> {{ conge.motif }}</p>
+            <p class="card-text"><strong>Statut actuel :</strong>
+                {% if conge.statut == 'EN_ATTENTE' %}
+                    <span class="badge bg-warning text-dark">{{ conge.get_statut_display }}</span>
+                {% elif conge.statut == 'APPROUVE' %}
+                    <span class="badge bg-success">{{ conge.get_statut_display }}</span>
+                {% else %}
+                    <span class="badge bg-danger">{{ conge.get_statut_display }}</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="commentaire" class="form-label">Commentaire RH</label>
+                    <textarea name="commentaire" id="commentaire" class="form-control" rows="3" placeholder="Ajouter un commentaire...">{{ conge.commentaire_rh }}</textarea>
+                </div>
+                <button type="submit" name="action" value="APPROUVE" class="btn btn-success me-2">
+                    <i class="bi bi-check-circle"></i> Approuver
+                </button>
+                <button type="submit" name="action" value="REFUSE" class="btn btn-danger">
+                    <i class="bi bi-x-circle"></i> Refuser
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}

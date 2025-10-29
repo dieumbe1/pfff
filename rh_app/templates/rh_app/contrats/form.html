@@ -1,13 +1,434 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ action }} Contrat - Gestion RH{% endblock %}
+
 {% block content %}
-<div class="container py-4">
-    <h2>{{ action }}</h2>
-    <div class="card"><div class="card-body">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Enregistrer</button>
-        </form>
-    </div></div>
+<div class="container-fluid py-4">
+    <!-- En-tête -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-1">
+                        {% if action == 'Ajouter' %}
+                            <i class="bi bi-file-earmark-plus me-2"></i>Nouveau Contrat
+                        {% else %}
+                            <i class="bi bi-pencil-square me-2"></i>Modifier le Contrat
+                        {% endif %}
+                    </h1>
+                    <p class="text-muted mb-0">
+                        {% if action == 'Ajouter' %}
+                            Créez un nouveau contrat de travail
+                        {% else %}
+                            Modifiez le contrat de {{ form.instance.employe.get_full_name }}
+                        {% endif %}
+                    </p>
+                </div>
+                <a href="{% url 'liste_contrats' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Retour à la liste
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-file-earmark-text me-2"></i>
+                        Informations du contrat
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Messages d'erreurs globaux -->
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            <h6 class="alert-heading">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                Veuillez corriger les erreurs suivantes :
+                            </h6>
+                            <ul class="mb-0">
+                                {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        <div class="row g-4">
+                            <!-- Informations de base -->
+                            <div class="col-12">
+                                <h6 class="text-primary mb-3 border-bottom pb-2">
+                                    <i class="bi bi-person me-2"></i>Informations de base
+                                </h6>
+                            </div>
+
+                            <!-- Employé -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.employe }}
+                                    <label for="{{ form.employe.id_for_label }}">
+                                        {{ form.employe.label }}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    {% if form.employe.help_text %}
+                                    <div class="form-text">{{ form.employe.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in form.employe.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Type de contrat -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.type_contrat }}
+                                    <label for="{{ form.type_contrat.id_for_label }}">
+                                        {{ form.type_contrat.label }}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    {% if form.type_contrat.help_text %}
+                                    <div class="form-text">{{ form.type_contrat.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in form.type_contrat.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Période du contrat -->
+                            <div class="col-12 mt-4">
+                                <h6 class="text-primary mb-3 border-bottom pb-2">
+                                    <i class="bi bi-calendar-event me-2"></i>Période du contrat
+                                </h6>
+                            </div>
+
+                            <!-- Date début -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.date_debut }}
+                                    <label for="{{ form.date_debut.id_for_label }}">
+                                        {{ form.date_debut.label }}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    {% if form.date_debut.help_text %}
+                                    <div class="form-text">{{ form.date_debut.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in form.date_debut.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Date fin -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.date_fin }}
+                                    <label for="{{ form.date_fin.id_for_label }}">
+                                        {{ form.date_fin.label }}
+                                    </label>
+                                    {% if form.date_fin.help_text %}
+                                    <div class="form-text">{{ form.date_fin.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in form.date_fin.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Poste et département -->
+                            <div class="col-12 mt-4">
+                                <h6 class="text-primary mb-3 border-bottom pb-2">
+                                    <i class="bi bi-briefcase me-2"></i>Poste et département
+                                </h6>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.poste }}
+                                    <label for="{{ form.poste.id_for_label }}">
+                                        {{ form.poste.label }}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    {% if form.poste.help_text %}
+                                    <div class="form-text">{{ form.poste.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in form.poste.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.departement }}
+                                    <label for="{{ form.departement.id_for_label }}">
+                                        {{ form.departement.label }}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    {% if form.departement.help_text %}
+                                    <div class="form-text">{{ form.departement.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in form.departement.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Rémunération -->
+                            <div class="col-12 mt-4">
+                                <h6 class="text-primary mb-3 border-bottom pb-2">
+                                    <i class="bi bi-currency-euro me-2"></i>Rémunération
+                                </h6>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.salaire }}
+                                    <label for="{{ form.salaire.id_for_label }}">
+                                        {{ form.salaire.label }}
+                                    </label>
+                                    {% if form.salaire.help_text %}
+                                    <div class="form-text">{{ form.salaire.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in form.salaire.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.statut }}
+                                    <label for="{{ form.statut.id_for_label }}">
+                                        {{ form.statut.label }}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    {% if form.statut.help_text %}
+                                    <div class="form-text">{{ form.statut.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in form.statut.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Informations complémentaires -->
+                            <div class="col-12 mt-4">
+                                <h6 class="text-primary mb-3 border-bottom pb-2">
+                                    <i class="bi bi-info-circle me-2"></i>Informations complémentaires
+                                </h6>
+                            </div>
+
+                            <!-- Champs supplémentaires (boucle pour les champs non traités) -->
+                            {% for field in form %}
+                                {% if field.name not in 'employe,type_contrat,date_debut,date_fin,poste,departement,salaire,statut' %}
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        {{ field }}
+                                        <label for="{{ field.id_for_label }}">
+                                            {{ field.label }}
+                                            {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                                        </label>
+                                        {% if field.help_text %}
+                                        <div class="form-text">{{ field.help_text }}</div>
+                                        {% endif %}
+                                        {% for error in field.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <!-- Boutons d'action -->
+                        <div class="row mt-5">
+                            <div class="col-12">
+                                <div class="d-flex gap-2 justify-content-end border-top pt-4">
+                                    <a href="{% url 'liste_contrats' %}" class="btn btn-lg btn-outline-secondary">
+                                        <i class="bi bi-x-circle me-2"></i>Annuler
+                                    </a>
+                                    <button type="submit" class="btn btn-lg btn-primary">
+                                        <i class="bi bi-check-circle me-2"></i>
+                                        {% if action == 'Ajouter' %}
+                                        Créer le contrat
+                                        {% else %}
+                                        Mettre à jour
+                                        {% endif %}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Statut actuel (uniquement pour modification) -->
+            {% if action == 'Modifier' %}
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h6 class="text-primary mb-2">
+                                <i class="bi bi-info-circle me-2"></i>Statut actuel du contrat
+                            </h6>
+                            <span class="badge 
+                                {% if form.instance.statut == 'ACTIF' %}bg-success
+                                {% elif form.instance.statut == 'EXPIRE' %}bg-secondary
+                                {% elif form.instance.statut == 'RESILIE' %}bg-danger
+                                {% else %}bg-warning{% endif %} fs-6 p-2">
+                                <i class="bi 
+                                    {% if form.instance.statut == 'ACTIF' %}bi-check-circle
+                                    {% elif form.instance.statut == 'EXPIRE' %}bi-clock-history
+                                    {% elif form.instance.statut == 'RESILIE' %}bi-x-circle
+                                    {% else %}bi-question-circle{% endif %} me-1"></i>
+                                {{ form.instance.get_statut_display }}
+                            </span>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <small class="text-muted">
+                                Créé le {{ form.instance.date_creation|date:"d/m/Y" }}
+                                {% if form.instance.date_modification %}
+                                <br>Modifié le {{ form.instance.date_modification|date:"d/m/Y" }}
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Aide contextuelle -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+                    <h6 class="text-primary mb-3">
+                        <i class="bi bi-lightbulb me-2"></i>Conseils pour créer un contrat
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled small">
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    Vérifiez les informations de l'employé
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    Choisissez le bon type de contrat
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    Respectez la période d'essai légale
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled small">
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    Définissez un salaire conforme à la convention
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    Précisez clairement le poste et les missions
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    Sauvegardez une copie numérique du contrat
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Styles personnalisés -->
+<style>
+.card {
+    border: none;
+    border-radius: 12px;
+}
+.form-floating {
+    margin-bottom: 1rem;
+}
+.form-floating > label {
+    padding: 1rem 0.75rem;
+}
+.form-control, .form-select {
+    border-radius: 8px;
+    padding: 1rem 0.75rem;
+    border: 2px solid #e9ecef;
+    transition: all 0.2s ease;
+}
+.form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+}
+.form-control.is-invalid, .form-select.is-invalid {
+    border-color: #dc3545;
+}
+.invalid-feedback {
+    font-size: 0.875rem;
+}
+.badge {
+    font-weight: 500;
+}
+</style>
+
+<!-- Script pour améliorer l'UX -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Ajout des classes Bootstrap aux champs
+    const inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        if (input.type !== 'checkbox' && input.type !== 'radio') {
+            input.classList.add('form-control');
+        }
+        if (input.tagName === 'SELECT') {
+            input.classList.remove('form-control');
+            input.classList.add('form-select');
+        }
+    });
+
+    // Gestion de la validation en temps réel
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+
+    // Gestion dynamique de la date de fin pour les CDI
+    const typeContratSelect = document.querySelector('#{{ form.type_contrat.id_for_label }}');
+    const dateFinField = document.querySelector('#{{ form.date_fin.id_for_label }}');
+    
+    if (typeContratSelect && dateFinField) {
+        function toggleDateFin() {
+            if (typeContratSelect.value === 'CDI') {
+                dateFinField.disabled = true;
+                dateFinField.placeholder = 'Non applicable pour les CDI';
+            } else {
+                dateFinField.disabled = false;
+                dateFinField.placeholder = '';
+            }
+        }
+        
+        typeContratSelect.addEventListener('change', toggleDateFin);
+        toggleDateFin(); // Initialisation
+    }
+});
+</script>
 {% endblock %}

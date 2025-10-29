@@ -1,81 +1,288 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Accueil - Gestion RH{% endblock %}
 
+{% block extra_css %}
+<style>
+    .hero-section {
+        min-height: 100vh;
+        background: url("{% static 'images/login-bg.jpg' %}") center/cover;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .hero-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 
+            0 20px 40px rgba(0, 0, 0, 0.1),
+            0 0 0 1px rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hero-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 
+            0 30px 60px rgba(0, 0, 0, 0.15),
+            0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    .hero-icon {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-icon::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+        transform: rotate(45deg);
+        animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+        0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+
+    .hero-icon i {
+        font-size: 3.5rem;
+        color: white;
+        position: relative;
+        z-index: 2;
+    }
+
+    .btn-hero {
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        height: 52px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .btn-hero-equal {
+        min-width: 280px;
+        max-width: 280px;
+        width: 280px;
+    }
+
+    @media (min-width: 992px) {
+        .btn-hero-equal {
+            min-width: 280px;
+            max-width: 280px;
+            width: 280px;
+        }
+    }
+
+    @media (min-width: 768px) and (max-width: 991.98px) {
+        .btn-hero-equal {
+            min-width: 240px;
+            max-width: 240px;
+            width: 240px;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .btn-hero-equal {
+            width: 100%;
+            min-width: 0;
+            max-width: none;
+        }
+    }
+
+    .btn-hero i {
+        font-size: 1rem;
+        opacity: 0.95;
+    }
+
+    .btn-hero:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 18px 50px rgba(0,0,0,0.18);
+    }
+
+    @media (max-width: 575.98px) {
+        .btn-hero i { display: none; }
+        .btn-hero { height: auto; padding: 0.75rem 1rem; }
+    }
+
+    .btn-hero-outline {
+        border: 2px solid #1f6feb;
+        color: #1f6feb;
+        background: transparent;
+    }
+
+    .btn-hero-primary {
+        background: linear-gradient(135deg, #1d4ed8, #153d8b);
+    }
+
+    .btn-hero-primary {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        border: none;
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+        color: white;
+    }
+
+    .btn-hero-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 35px rgba(37, 99, 235, 0.4);
+        color: white;
+    }
+
+    .btn-hero-outline {
+        border: 2px solid #2563eb;
+        color: #2563eb;
+        background: transparent;
+    }
+
+    .btn-hero-outline:hover {
+        background: #2563eb;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+    }
+
+    .pulse-animation {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .professional-badge {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    /* Styles pour aligner les boutons */
+    .buttons-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 767.98px) {
+        .buttons-container {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+
+    .btn-hero-centered {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="min-vh-100 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<div class="hero-section">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
-                <div class="card text-center p-5">
-                    <div class="card-body">
-                        <div class="mb-4">
-                            <i class="bi bi-building" style="font-size: 5rem; color: #2563eb;"></i>
+            <div class="col-md-10 col-lg-8">
+                <div class="hero-card p-5">
+                    <div class="text-center">
+                        <div class="professional-badge">
+                            <i class="bi bi-shield-check me-2"></i>Solution Professionnelle
                         </div>
-                        <h1 class="display-4 fw-bold mb-3">Gestion RH</h1>
-                        <p class="lead text-muted mb-4">
-                            Système de gestion des ressources humaines
-                        </p>
                         
+                        <div class="hero-icon pulse-animation">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        
+                        <h1 class="display-4 fw-bold mb-3 text-dark">
+                            Gestion <span class="text-primary">RH</span>
+                        </h1>
+                        
+                        <p class="lead text-muted mb-4 fs-5">
+                            Système de gestion des bases de données des ressources humaines
+                            <br>pour les écoles de formation
+                        </p>
+
                         {% if user.is_authenticated %}
-                        <div class="d-grid gap-2">
-                            <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">
-                                <i class="bi bi-speedometer2"></i> Accéder au tableau de bord
+                        <div class="buttons-container">
+                            <a href="{% url 'dashboard' %}" class="btn btn-hero btn-hero-primary btn-hero-equal btn-hero-centered">
+                                <i class="bi bi-speedometer2 me-2"></i> Accéder au tableau de bord
                             </a>
-                            <a href="{% url 'logout' %}" class="btn btn-outline-secondary">
-                                <i class="bi bi-box-arrow-right"></i> Déconnexion
+                            <a href="{% url 'logout' %}" class="btn btn-hero btn-hero-outline btn-hero-equal btn-hero-centered">
+                                <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
                             </a>
                         </div>
                         {% else %}
-                        <div class="d-grid gap-2">
-                            <a href="{% url 'login' %}" class="btn btn-primary btn-lg">
-                                <i class="bi bi-box-arrow-in-right"></i> Se connecter
+                        <div class="buttons-container">
+                            <a href="{% url 'login' %}" class="btn btn-hero btn-hero-primary btn-hero-equal btn-hero-centered">
+                                <i class="bi bi-box-arrow-in-right"></i>
+                                <span>Connexion</span>
+                            </a>
+                            <a href="{% url 'inscription' %}" class="btn btn-hero btn-hero-outline btn-hero-equal btn-hero-centered">
+                                <span>Créer un compte</span>
                             </a>
                         </div>
                         {% endif %}
-
-                        <div class="row mt-5 text-start">
-                            <div class="col-md-6 mb-3">
-                                <div class="d-flex align-items-start">
-                                    <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
-                                    <div>
-                                        <h6 class="mb-0">Gestion des employés</h6>
-                                        <small class="text-muted">CRUD complet</small>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="d-flex align-items-start">
-                                    <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
-                                    <div>
-                                        <h6 class="mb-0">Formations</h6>
-                                        <small class="text-muted">Inscription et suivi</small>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="d-flex align-items-start">
-                                    <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
-                                    <div>
-                                        <h6 class="mb-0">Congés</h6>
-                                        <small class="text-muted">Demandes et validations</small>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="d-flex align-items-start">
-                                    <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
-                                    <div>
-                                        <h6 class="mb-0">Salaires & Contrats</h6>
-                                        <small class="text-muted">Gestion complète</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation du hero card
+        const heroCard = document.querySelector('.hero-card');
+        if (heroCard) {
+            heroCard.style.opacity = '0';
+            heroCard.style.transform = 'scale(0.9)';
+            
+            setTimeout(() => {
+                heroCard.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                heroCard.style.opacity = '1';
+                heroCard.style.transform = 'scale(1)';
+            }, 300);
+        }
+    });
+</script> 
 {% endblock %}

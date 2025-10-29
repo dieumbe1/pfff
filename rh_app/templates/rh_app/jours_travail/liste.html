@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{# {% load widget_tweaks %} #}
+
+{% block title %}Jours de Travail{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">Suivi des Jours de Travail</h3>
+                    {% if user.employe.role == 'RH' %}
+                    <a href="{% url 'ajouter_jour_travail' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Ajouter un Jour de Travail
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Employé</th>
+                                    <th>Date</th>
+                                    <th>Heures Travaillées</th>
+                                    <th>Heures Supplémentaires</th>
+                                    <th>Total</th>
+                                    <th>Validé</th>
+                                    <th>Commentaire</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for jour in jours_travail %}
+                                <tr>
+                                    <td>{{ jour.employe.get_full_name }}</td>
+                                    <td>{{ jour.date|date:"d/m/Y" }}</td>
+                                    <td>{{ jour.heures_travaillees }}h</td>
+                                    <td>{{ jour.heures_supplementaires }}h</td>
+                                    <td>
+                                        <strong>{{ jour.heures_travaillees|add:jour.heures_supplementaires }}h</strong>
+                                    </td>
+                                    <td>
+                                        {% if jour.valide %}
+                                            <span class="badge badge-success">Oui</span>
+                                        {% else %}
+                                            <span class="badge badge-warning">En attente</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ jour.commentaire|truncatechars:30 }}</td>
+                                    <td>
+                                        {% if user.employe.role == 'RH' %}
+                                        <a href="{% url 'supprimer_jour_travail' jour.pk %}" class="btn btn-sm btn-danger" 
+                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce jour de travail ?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted">
+                                        Aucun jour de travail enregistré
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

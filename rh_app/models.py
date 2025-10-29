@@ -1,6 +1,31 @@
 from django.db import models
+from django.db.models.functions import Lower
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
+
+class Departement(models.Model):
+    nom = models.CharField(max_length=100, unique=True, verbose_name='Nom du département')
+    description = models.TextField(blank=True, verbose_name='Description')
+    responsable = models.ForeignKey('Employe', on_delete=models.SET_NULL, null=True, blank=True, 
+                                   related_name='departements_diriges', verbose_name='Responsable')
+    budget_annuel = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, 
+                                       verbose_name='Budget annuel')
+    date_creation = models.DateTimeField(auto_now_add=True, verbose_name='Date de création')
+    actif = models.BooleanField(default=True, verbose_name='Actif')
+    
+    class Meta:
+        verbose_name = 'Département'
+        verbose_name_plural = 'Départements'
+        ordering = ['nom']
+        constraints = [
+            models.UniqueConstraint(Lower('nom'), name='unique_departement_nom_ci')
+        ]
+    
+    def __str__(self):
+        return self.nom
+    
+    def nombre_employes(self):
+        return self.employes.count()
 
 class Employe(models.Model):
     ROLE_CHOICES = [
@@ -25,7 +50,8 @@ class Employe(models.Model):
     date_naissance = models.DateField(verbose_name='Date de naissance')
     date_embauche = models.DateField(verbose_name="Date d'embauche")
     poste = models.CharField(max_length=100, verbose_name='Poste')
-    departement = models.CharField(max_length=100, verbose_name='Département')
+    departement = models.ForeignKey(Departement, on_delete=models.SET_NULL, null=True, blank=True, 
+                                   related_name='employes', verbose_name='Département')
     statut = models.CharField(max_length=10, choices=STATUT_CHOICES, default='ACTIF', verbose_name='Statut')
     photo = models.ImageField(upload_to='employes/', blank=True, null=True, verbose_name='Photo')
     
@@ -99,6 +125,21 @@ class Conge(models.Model):
         ('PATERNITE', 'Congé paternité'),
         ('SANS_SOLDE', 'Congé sans solde'),
         ('SPECIAL', 'Congé spécial'),
+        ('FORMATION', 'Congé formation'),
+        ('EXCEPTIONNEL', 'Congé exceptionnel'),
+        ('FAMILIAL', 'Congé familial'),
+        ('MISSION', 'Congé pour mission'),
+        ('SEMINAIRE', 'Congé séminaire'),
+        ('ETUDE', 'Congé d\'étude'),
+        ('ADMINISTRATIF', 'Congé administratif'),
+        ('DEUIL', 'Congé deuil'),
+        ('MARIAGE', 'Congé mariage'),
+        ('NAISSANCE', 'Congé naissance'),
+        ('ACCIDENT', 'Congé accident du travail'),
+        ('REPOS', 'Congé de repos compensateur'),
+        ('SANTE', 'Congé pour raisons de santé'),
+        ('SABBATIQUE', 'Congé sabbatique'),
+        ('AUTRE', 'Autre'),
     ]
     
     STATUT_CHOICES = [
@@ -130,9 +171,8 @@ class Contrat(models.Model):
     TYPE_CHOICES = [
         ('CDI', 'CDI - Contrat à durée indéterminée'),
         ('CDD', 'CDD - Contrat à durée déterminée'),
-        ('STAGE', 'Stage'),
-        ('INTERIM', 'Intérim'),
-        ('APPRENTISSAGE', 'Apprentissage'),
+        ('VACATAIRE', 'Vacataire'),
+        ('PRESTATAIRE', 'Prestataire'),
     ]
     
     STATUT_CHOICES = [
@@ -165,8 +205,6 @@ class Salaire(models.Model):
     mois = models.IntegerField(verbose_name='Mois', validators=[MinValueValidator(1), MaxValueValidator(12)])
     annee = models.IntegerField(verbose_name='Année')
     salaire_base = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Salaire de base')
-    primes = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='Primes')
-    deductions = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='Déductions')
     salaire_net = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Salaire net')
     date_paiement = models.DateField(verbose_name='Date de paiement')
     bulletin = models.FileField(upload_to='bulletins/', blank=True, null=True, verbose_name='Bulletin de paie')
@@ -182,7 +220,9 @@ class Salaire(models.Model):
         return f"{self.employe.get_full_name()} - {self.mois}/{self.annee}"
     
     def save(self, *args, **kwargs):
-        self.salaire_net = self.salaire_base + self.primes - self.deductions
+        # Le salaire net correspond désormais uniquement au salaire de base
+        # (les primes et déductions ont été retirées du modèle)
+        self.salaire_net = self.salaire_base
         super().save(*args, **kwargs)
 
 class Presence(models.Model):
@@ -210,3 +250,50 @@ class Presence(models.Model):
     
     def __str__(self):
         return f"{self.employe.get_full_name()} - {self.date} - {self.get_statut_display()}"
+
+class DossierPersonnel(models.Model):
+    TYPE_DOCUMENT_CHOICES = [
+        ('CONTRAT', 'Contrat de travail'),
+        ('CV', 'CV'),
+        ('DIPLOME', 'Diplôme'),
+        ('CERTIFICAT', 'Certificat'),
+        ('EVALUATION', 'Évaluation'),
+        ('SANCTION', 'Sanction'),
+        ('AUTRE', 'Autre'),
+    ]
+    
+    employe = models.ForeignKey(Employe, on_delete=models.CASCADE, related_name='dossiers', verbose_name='Employé')
+    type_document = models.CharField(max_length=20, choices=TYPE_DOCUMENT_CHOICES, verbose_name='Type de document')
+    titre = models.CharField(max_length=200, verbose_name='Titre du document')
+    description = models.TextField(blank=True, verbose_name='Description')
+    document = models.FileField(upload_to='dossiers_personnel/', verbose_name='Document')
+    date_ajout = models.DateTimeField(auto_now_add=True, verbose_name='Date d\'ajout')
+    date_expiration = models.DateField(null=True, blank=True, verbose_name='Date d\'expiration')
+    confidentiel = models.BooleanField(default=False, verbose_name='Confidentiel')
+    
+    class Meta:
+        verbose_name = 'Dossier personnel'
+        verbose_name_plural = 'Dossiers personnels'
+        ordering = ['-date_ajout']
+    
+    def __str__(self):
+        return f"{self.employe.get_full_name()} - {self.titre}"
+
+class JourTravail(models.Model):
+    employe = models.ForeignKey(Employe, on_delete=models.CASCADE, related_name='jours_travail', verbose_name='Employé')
+    date = models.DateField(verbose_name='Date')
+    heures_travaillees = models.DecimalField(max_digits=4, decimal_places=2, default=8.0, 
+                                           verbose_name='Heures travaillées')
+    heures_supplementaires = models.DecimalField(max_digits=4, decimal_places=2, default=0, 
+                                               verbose_name='Heures supplémentaires')
+    commentaire = models.TextField(blank=True, verbose_name='Commentaire')
+    valide = models.BooleanField(default=False, verbose_name='Validé')
+    
+    class Meta:
+        verbose_name = 'Jour de travail'
+        verbose_name_plural = 'Jours de travail'
+        unique_together = ['employe', 'date']
+        ordering = ['-date']
+    
+    def __str__(self):
+        return f"{self.employe.get_full_name()} - {self.date} ({self.heures_travaillees}h)"

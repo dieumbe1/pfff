@@ -1,34 +1,148 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %}Liste des employés{% endblock %}
+
 {% block content %}
-<div class="container py-4">
+<div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Liste des employés</h2>
-        <a href="{% url 'ajouter_employe' %}" class="btn btn-primary"><i class="bi bi-plus"></i> Ajouter</a>
+        <div>
+            <h1 class="h3 fw-bold text-primary">Gestion des Employés</h1>
+            <p class="text-muted">Consultez et gérez l'ensemble du personnel</p>
+        </div>
+        <a href="{% url 'ajouter_employe' %}" class="btn btn-primary rounded-pill px-4">
+            <i class="bi bi-person-plus me-2"></i>Nouvel Employé
+        </a>
     </div>
-    <div class="card">
-        <div class="card-body">
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 border-0">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h5 class="card-title mb-0 text-dark">
+                        <i class="bi bi-people-fill text-primary me-2"></i>
+                        Liste du personnel
+                    </h5>
+                </div>
+                <div class="col-auto">
+                    <span class="badge bg-primary rounded-pill">{{ employes|length }} employé(s)</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-body p-0">
             {% if employes %}
-            <table class="table table-hover">
-                <thead><tr><th>Matricule</th><th>Nom</th><th>Poste</th><th>Actions</th></tr></thead>
-                <tbody>
-                {% for emp in employes %}
-                <tr>
-                    <td>{{ emp.matricule }}</td>
-                    <td>{{ emp.get_full_name }}</td>
-                    <td>{{ emp.poste }}</td>
-                    <td>
-                        <a href="{% url 'detail_employe' emp.pk %}" class="btn btn-sm btn-info"><i class="bi bi-eye"></i></a>
-                        <a href="{% url 'modifier_employe' emp.pk %}" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
-                    </td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Employé</th>
+                            <th>Matricule</th>
+                            <th>Poste</th>
+                            <th>Département</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for emp in employes %}
+                    <tr class="hover-shadow">
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-container me-3">
+                                    {% if emp.photo %}
+                                    <img src="{{ emp.photo.url }}" alt="{{ emp.get_full_name }}" 
+                                         class="avatar-img rounded-circle" width="40" height="40">
+                                    {% else %}
+                                    <div class="avatar-placeholder bg-light rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width: 40px; height: 40px;">
+                                        <i class="bi bi-person text-muted"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <div class="fw-semibold text-dark">{{ emp.get_full_name }}</div>
+                                    {% if emp.email %}
+                                    <small class="text-muted">{{ emp.email }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="fw-bold text-primary">{{ emp.matricule }}</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border">{{ emp.poste }}</span>
+                        </td>
+                        <td>
+                            {% if emp.departement %}
+                            <span class="text-muted small">{{ emp.departement }}</span>
+                            {% else %}
+                            <span class="text-muted small">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'detail_employe' emp.pk %}" class="btn btn-sm btn-outline-info rounded-start-pill" 
+                                   data-bs-toggle="tooltip" title="Voir détails">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'modifier_employe' emp.pk %}" class="btn btn-sm btn-outline-warning rounded-0"
+                                   data-bs-toggle="tooltip" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'supprimer_employe' emp.pk %}" class="btn btn-sm btn-outline-danger rounded-end-pill"
+                                   data-bs-toggle="tooltip" title="Supprimer"
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer {{ emp.get_full_name }} ?')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             {% else %}
-            <p class="text-center text-muted">Aucun employé</p>
+            <div class="text-center py-5">
+                <div class="mb-3">
+                    <i class="bi bi-people display-1 text-muted"></i>
+                </div>
+                <h5 class="text-muted">Aucun employé enregistré</h5>
+                <p class="text-muted mb-4">Commencez par ajouter le premier employé</p>
+                <a href="{% url 'ajouter_employe' %}" class="btn btn-primary rounded-pill px-4">
+                    <i class="bi bi-person-plus me-2"></i>Ajouter un employé
+                </a>
+            </div>
             {% endif %}
         </div>
     </div>
 </div>
+
+
+<style>
+.hover-shadow:hover {
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+}
+.avatar-img {
+    object-fit: cover;
+    border: 2px solid #e9ecef;
+}
+.avatar-placeholder {
+    border: 2px solid #e9ecef;
+    font-size: 16px;
+}
+.table th {
+    border-top: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+}
+.badge {
+    font-weight: 500;
+}
+</style>
+
 {% endblock %}

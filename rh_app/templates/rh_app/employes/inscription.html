@@ -1,0 +1,893 @@
+{% extends "base.html" %}
+
+{% block title %}Inscription - Gestion RH{% endblock %}
+
+{% block extra_css %}
+<style>
+    .register-section {
+        min-height: 100vh;
+        background: 
+            linear-gradient(135deg, 
+                rgba(99, 102, 241, 0.95) 0%, 
+                rgba(168, 85, 247, 0.9) 50%, 
+                rgba(236, 72, 153, 0.85) 100%),
+            url('https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        padding: 2rem 0;
+    }
+
+    .register-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+        animation: gradientShift 15s ease infinite;
+    }
+
+    @keyframes gradientShift {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.8; }
+    }
+
+    .register-card {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(40px);
+        border-radius: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 
+            0 25px 60px rgba(0, 0, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        overflow: hidden;
+        position: relative;
+        z-index: 2;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .register-card:hover {
+        transform: translateY(-8px) scale(1.005);
+        box-shadow: 
+            0 35px 80px rgba(0, 0, 0, 0.25),
+            inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    .register-icon {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        box-shadow: 
+            0 15px 35px rgba(99, 102, 241, 0.4),
+            inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+        animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-10px) rotate(5deg); }
+    }
+
+    .register-icon::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+        transform: translateX(-100%);
+        animation: shine 2s infinite;
+    }
+
+    .register-icon i {
+        font-size: 3rem;
+        color: white;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+
+    .form-floating {
+        position: relative;
+        margin-bottom: 1.75rem;
+    }
+
+    .form-control {
+        border: 2px solid #f1f5f9;
+        border-radius: 16px;
+        padding: 1.25rem 1.5rem;
+        font-size: 1.05rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-control:focus {
+        border-color: #6366f1;
+        box-shadow: 
+            0 0 0 4px rgba(99, 102, 241, 0.15),
+            0 4px 12px rgba(0, 0, 0, 0.1);
+        background: #ffffff;
+        transform: translateY(-2px);
+    }
+
+    .form-select {
+        border: 2px solid #f1f5f9;
+        border-radius: 16px;
+        padding: 1.25rem 1.5rem;
+        font-size: 1.05rem;
+        transition: all 0.3s ease;
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-select:focus {
+        border-color: #6366f1;
+        box-shadow: 
+            0 0 0 4px rgba(99, 102, 241, 0.15),
+            0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .btn-register {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        border: none;
+        border-radius: 16px;
+        padding: 1.5rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 
+            0 12px 30px rgba(99, 102, 241, 0.4),
+            inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .btn-register:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 
+            0 20px 40px rgba(99, 102, 241, 0.5),
+            inset 0 1px 1px rgba(255, 255, 255, 0.3);
+        color: white;
+    }
+
+    .btn-register::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.6s;
+    }
+
+    .btn-register:hover::before {
+        left: 100%;
+    }
+
+    .floating-shapes {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .shape {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 50%;
+        animation: float 8s ease-in-out infinite;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .shape:nth-child(1) {
+        width: 80px;
+        height: 80px;
+        top: 10%;
+        left: 5%;
+        animation-delay: 0s;
+    }
+
+    .shape:nth-child(2) {
+        width: 120px;
+        height: 120px;
+        top: 5%;
+        right: 8%;
+        animation-delay: 1.5s;
+    }
+
+    .shape:nth-child(3) {
+        width: 60px;
+        height: 60px;
+        bottom: 15%;
+        left: 10%;
+        animation-delay: 3s;
+    }
+
+    .shape:nth-child(4) {
+        width: 150px;
+        height: 150px;
+        bottom: 5%;
+        right: 5%;
+        animation-delay: 2s;
+    }
+
+    @keyframes float {
+        0%, 100% { 
+            transform: translateY(0px) rotate(0deg) scale(1); 
+        }
+        33% { 
+            transform: translateY(-30px) rotate(120deg) scale(1.1); 
+        }
+        66% { 
+            transform: translateY(15px) rotate(240deg) scale(0.9); 
+        }
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #64748b;
+        cursor: pointer;
+        z-index: 3;
+        transition: all 0.3s ease;
+        padding: 8px;
+        border-radius: 8px;
+    }
+
+    .password-toggle:hover {
+        color: #6366f1;
+        background: rgba(99, 102, 241, 0.1);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.75rem;
+    }
+
+    .form-full-width {
+        grid-column: 1 / -1;
+    }
+
+    .progress-indicator {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 3rem;
+        position: relative;
+        padding: 0 2rem;
+    }
+
+    .progress-step {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #64748b;
+        position: relative;
+        z-index: 2;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 3px solid transparent;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress-step.active {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        transform: scale(1.1);
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .progress-step.completed {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    }
+
+    .progress-line {
+        position: absolute;
+        top: 50%;
+        left: 25px;
+        right: 25px;
+        height: 4px;
+        background: #f1f5f9;
+        transform: translateY(-50%);
+        z-index: 1;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    .progress-line-fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background: linear-gradient(90deg, #6366f1, #8b5cf6);
+        transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 0%;
+        border-radius: 2px;
+    }
+
+    .field-group {
+        margin-bottom: 1.75rem;
+    }
+
+    .field-label {
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 0.75rem;
+        display: block;
+        font-size: 1rem;
+    }
+
+    .field-help {
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin-top: 0.5rem;
+        line-height: 1.4;
+    }
+
+    /* Animation d'entrée améliorée */
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .animate-slide-in {
+        animation: slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+
+    /* Style pour les erreurs de formulaire */
+    .error-list {
+        color: #dc2626;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .error-list li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+        background: rgba(220, 38, 38, 0.05);
+        border-radius: 8px;
+        border-left: 3px solid #dc2626;
+    }
+
+    .is-invalid {
+        border-color: #dc2626 !important;
+        box-shadow: 
+            0 0 0 4px rgba(220, 38, 38, 0.1),
+            0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .alert-auth {
+        border-radius: 16px;
+        border: none;
+        background: linear-gradient(135deg, #fef3c7, #fef7ed);
+        border-left: 4px solid #f59e0b;
+        color: #92400e;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 1.25rem;
+    }
+
+    /* Nouveaux styles pour les labels flottants améliorés */
+    .form-floating > label {
+        color: #64748b;
+        font-weight: 500;
+        padding: 1.25rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-floating > .form-control:focus ~ label,
+    .form-floating > .form-control:not(:placeholder-shown) ~ label,
+    .form-floating > .form-select ~ label {
+        transform: scale(0.85) translateY(-0.9rem) translateX(0.5rem);
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 600;
+        padding: 0 0.5rem;
+        margin-left: 0.5rem;
+    }
+
+    /* Responsive amélioré */
+    @media (max-width: 768px) {
+        .register-card {
+            margin: 1rem;
+            padding: 2.5rem !important;
+        }
+        
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .progress-indicator {
+            padding: 0 1rem;
+        }
+        
+        .progress-step {
+            width: 40px;
+            height: 40px;
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .register-section {
+            padding: 1rem 0;
+        }
+        
+        .register-card {
+            padding: 2rem !important;
+            border-radius: 20px;
+        }
+        
+        .register-icon {
+            width: 80px;
+            height: 80px;
+        }
+        
+        .register-icon i {
+            font-size: 2.5rem;
+        }
+        
+        .form-control,
+        .form-select {
+            padding: 1rem 1.25rem;
+        }
+    }
+
+    /* Style pour les liens */
+    .auth-link {
+        color: #6366f1;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .auth-link:hover {
+        color: #8b5cf6;
+        transform: translateY(-1px);
+    }
+
+    .auth-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        transition: width 0.3s ease;
+        border-radius: 1px;
+    }
+
+    .auth-link:hover::after {
+        width: 100%;
+    }
+
+    /* Animation de particules */
+    .particles {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .particle {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 50%;
+        animation: particleFloat 6s ease-in-out infinite;
+    }
+
+    @keyframes particleFloat {
+        0%, 100% { 
+            transform: translateY(0px) translateX(0px) rotate(0deg); 
+            opacity: 0;
+        }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        50% { 
+            transform: translateY(-100px) translateX(50px) rotate(180deg); 
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-section">
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-10">
+                <div class="register-card p-5 animate-slide-in">
+                    <div class="text-center mb-5">
+                        <div class="register-icon">
+                            <i class="bi bi-person-badge"></i>
+                        </div>
+                        <h2 class="fw-bold text-dark mb-3">Rejoindre l'Équipe</h2>
+                        <p class="text-muted fs-5">Créez votre compte employé pour accéder à la plateforme RH</p>
+                    </div>
+
+                    <!-- Indicateur de progression amélioré -->
+                    <div class="progress-indicator">
+                        <div class="progress-line">
+                            <div class="progress-line-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-step active" data-step="1">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div class="progress-step" data-step="2">
+                            <i class="bi bi-shield-lock"></i>
+                        </div>
+                        <div class="progress-step" data-step="3">
+                            <i class="bi bi-briefcase"></i>
+                        </div>
+                    </div>
+
+                    {% if form.errors %}
+                    <div class="alert alert-auth alert-dismissible fade show mb-4" role="alert">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-exclamation-triangle-fill me-3 fs-5"></i>
+                            <div class="flex-grow-1">
+                                <strong>Attention</strong> - Veuillez corriger les erreurs ci-dessous pour continuer.
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endif %}
+
+                    <form method="post" class="mb-4" id="registerForm">
+                        {% csrf_token %}
+                        
+                        <div class="form-grid">
+                            <!-- Informations personnelles -->
+                            {% for field in form %}
+                                {% if field.name in 'username,email,first_name,last_name' %}
+                                <div class="form-floating {% if field.name in 'username,email' %}form-full-width{% endif %}">
+                                    {{ field }}
+                                    <label for="{{ field.id_for_label }}">
+                                        <i class="bi 
+                                            {% if field.name == 'username' %}bi-person
+                                            {% elif field.name == 'email' %}bi-envelope-at
+                                            {% elif field.name == 'first_name' %}bi-person-circle
+                                            {% elif field.name == 'last_name' %}bi-person-badge
+                                            {% endif %} me-2"></i>
+                                        {{ field.label }}
+                                    </label>
+                                    {% if field.errors %}
+                                    <ul class="error-list">
+                                        {% for error in field.errors %}
+                                        <li><i class="bi bi-x-circle-fill"></i> {{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+
+                            <!-- Mot de passe -->
+                            {% for field in form %}
+                                {% if field.name in 'password1,password2' %}
+                                <div class="form-floating form-full-width position-relative">
+                                    {{ field }}
+                                    <label for="{{ field.id_for_label }}">
+                                        <i class="bi 
+                                            {% if field.name == 'password1' %}bi-lock-fill
+                                            {% else %}bi-shield-check
+                                            {% endif %} me-2"></i>
+                                        {{ field.label }}
+                                    </label>
+                                    {% if field.name == 'password1' or field.name == 'password2' %}
+                                    <button type="button" class="password-toggle" data-target="{{ field.id_for_label }}">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    {% endif %}
+                                    {% if field.errors %}
+                                    <ul class="error-list">
+                                        {% for error in field.errors %}
+                                        <li><i class="bi bi-x-circle-fill"></i> {{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                                    {% if field.help_text %}
+                                    <div class="field-help">
+                                        <i class="bi bi-info-circle me-1"></i>{{ field.help_text }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+
+                            <!-- Autres champs -->
+                            {% for field in form %}
+                                {% if field.name not in 'username,email,first_name,last_name,password1,password2' %}
+                                <div class="form-floating {% if 'phone' in field.name or 'departement' in field.name %}form-full-width{% endif %}">
+                                    {% if field.field.widget.input_type == 'select' %}
+                                    <select name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-select">
+                                        <option value="">Choisissez {{ field.label|lower }}</option>
+                                        {% for value, label in field.field.choices %}
+                                            <option value="{{ value }}" {% if field.value == value %}selected{% endif %}>{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% else %}
+                                    {{ field }}
+                                    {% endif %}
+                                    <label for="{{ field.id_for_label }}">
+                                        <i class="bi 
+                                            {% if 'phone' in field.name %}bi-phone
+                                            {% elif 'departement' in field.name %}bi-building
+                                            {% elif 'position' in field.name %}bi-briefcase
+                                            {% else %}bi-info-circle
+                                            {% endif %} me-2"></i>
+                                        {{ field.label }}
+                                    </label>
+                                    {% if field.errors %}
+                                    <ul class="error-list">
+                                        {% for error in field.errors %}
+                                        <li><i class="bi bi-x-circle-fill"></i> {{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                                    {# Help text specifically for the departement free-text field #}
+                                    {% if field.name == 'departement' %}
+                                    <div class="field-help">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Tapez le nom du département (ex. : Informatique). Si le département n'existe pas, il sera créé automatiquement.
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="d-grid mt-5">
+                            <button type="submit" class="btn btn-register">
+                                <i class="bi bi-person-add me-2"></i> Créer mon compte employé
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mb-4">
+                        <p class="text-muted mb-2">
+                            Déjà membre de l'équipe ?
+                        </p>
+                        <a href="{% url 'login' %}" class="auth-link fw-bold">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter à mon compte
+                        </a>
+                    </div>
+
+                    <div class="text-center">
+                        <a href="{% url 'accueil' %}" class="auth-link">
+                            <i class="bi bi-arrow-left me-2"></i> Retour à l'accueil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Amélioration des champs de formulaire
+        const formFields = document.querySelectorAll('input, select, textarea');
+        
+        formFields.forEach(field => {
+            if (field.tagName === 'SELECT') {
+                field.className = 'form-select form-select-lg';
+            } else if (field.type !== 'checkbox' && field.type !== 'radio') {
+                field.className = 'form-control form-control-lg';
+            }
+            
+            // Ajouter placeholder vide si nécessaire
+            if (field.tagName !== 'SELECT' && !field.getAttribute('placeholder')) {
+                field.setAttribute('placeholder', ' ');
+            }
+        });
+
+        // Toggle mot de passe amélioré
+        const passwordToggles = document.querySelectorAll('.password-toggle');
+        passwordToggles.forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const targetField = document.getElementById(targetId);
+                
+                if (targetField) {
+                    const type = targetField.getAttribute('type') === 'password' ? 'text' : 'password';
+                    targetField.setAttribute('type', type);
+                    const icon = this.querySelector('i');
+                    icon.className = type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+                    
+                    // Animation du bouton
+                    this.style.transform = 'translateY(-50%) scale(1.1)';
+                    setTimeout(() => {
+                        this.style.transform = 'translateY(-50%) scale(1)';
+                    }, 200);
+                }
+            });
+        });
+
+        // Validation en temps réel avec feedback visuel
+        const formControls = document.querySelectorAll('.form-control, .form-select');
+        formControls.forEach(control => {
+            control.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+                this.style.background = '#f8fafc';
+            });
+            
+            control.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.parentElement.classList.remove('focused');
+                    this.style.background = '#ffffff';
+                }
+                validateField(this);
+            });
+            
+            control.addEventListener('input', function() {
+                validateField(this);
+                updateProgress();
+            });
+        });
+
+        function validateField(field) {
+            const isValid = field.value.trim() !== '';
+            if (isValid) {
+                field.classList.remove('is-invalid');
+                field.classList.add('is-valid');
+                field.style.borderColor = '#10b981';
+            } else {
+                field.classList.remove('is-valid');
+                field.style.borderColor = '';
+            }
+        }
+
+        // Mise à jour de la barre de progression améliorée
+        function updateProgress() {
+            const filledFields = Array.from(formControls).filter(field => {
+                return field.value && field.value.trim() !== '';
+            }).length;
+            
+            const totalFields = formControls.length;
+            const progress = Math.min((filledFields / totalFields) * 100, 100);
+            
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            // Mettre à jour les étapes avec animation
+            const steps = document.querySelectorAll('.progress-step');
+            const stepValue = Math.floor((progress / 100) * steps.length);
+            
+            steps.forEach((step, index) => {
+                setTimeout(() => {
+                    if (index < stepValue) {
+                        step.classList.add('completed');
+                        step.classList.remove('active');
+                    } else if (index === stepValue) {
+                        step.classList.add('active');
+                        step.classList.remove('completed');
+                    } else {
+                        step.classList.remove('active', 'completed');
+                    }
+                }, index * 100);
+            });
+        }
+
+        // Initialiser la progression
+        updateProgress();
+
+        // Gestion des erreurs de formulaire
+        const errorFields = document.querySelectorAll('.error-list');
+        errorFields.forEach(errorField => {
+            const field = errorField.closest('.form-floating').querySelector('input, select, textarea');
+            if (field) {
+                field.classList.add('is-invalid');
+            }
+        });
+
+        // Animation des particules
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 15;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Position aléatoire
+                const size = Math.random() * 4 + 1;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const delay = Math.random() * 6;
+                const duration = Math.random() * 4 + 4;
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.animationDuration = `${duration}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        createParticles();
+
+        // Animation de soumission du formulaire
+        const form = document.getElementById('registerForm');
+        form.addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner"></i> Création du compte...';
+            submitBtn.disabled = true;
+        });
+
+        // Effet de focus sur les champs avec animation
+        formControls.forEach(control => {
+            control.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+            });
+            
+            control.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+    });
+</script>
+{% endblock %}

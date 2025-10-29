@@ -1,9 +1,340 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gestion des Formations - Liste complète{% endblock %}
+
 {% block content %}
-<div class="container py-4">
-    <h2>Liste</h2>
-    <div class="card"><div class="card-body">
-        <p>Liste des éléments ici</p>
-    </div></div>
+<div class="container-fluid py-4">
+    <!-- En-tête -->
+    <div class="row mb-4">
+        <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-1">Gestion des Formations</h1>
+                    <p class="text-muted mb-0">Gérez l'ensemble des formations programmées</p>
+                </div>
+                {% if user.employe.role == 'RH' %}
+                    <a href="{% url 'ajouter_formation' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>Ajouter une formation
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Barre de recherche simple -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body py-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h6 class="mb-0 text-muted">
+                                <i class="bi bi-filter me-2"></i>{{ formations|length }} formation(s) au total
+                            </h6>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            {% if not user.employe.role == 'RH' %}
+                            <!-- Bouton ouvre une modal listant les formations disponibles à l'inscription -->
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#inscriptionModal">
+                                <i class="bi bi-person-plus me-2"></i>Inscrire
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tableau des formations -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-list-task me-2"></i>Liste des Formations
+                    </h5>
+                    <span class="badge bg-primary">{{ formations|length }} formation(s)</span>
+                </div>
+                <div class="card-body p-0">
+                    {% if formations %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">
+                                            <i class="bi bi-journal-text me-2"></i>Titre
+                                        </th>
+                                        <th>
+                                            <i class="bi bi-person me-2"></i>Formateur
+                                        </th>
+                                        <th>
+                                            <i class="bi bi-calendar-event me-2"></i>Dates
+                                        </th>
+                                        <th>
+                                            <i class="bi bi-people me-2"></i>Participants
+                                        </th>
+                                        <th>
+                                            <i class="bi bi-tags me-2"></i>Statut
+                                        </th>
+                                        <th class="text-end pe-4">
+                                            <i class="bi bi-gear me-2"></i>Actions
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for formation in formations %}
+                                    <tr class="{% if formation.statut == 'ANNULEE' %}table-secondary{% endif %}">
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0">
+                                                    <div class="bg-primary bg-opacity-10 rounded p-2">
+                                                        <i class="bi bi-journal-text text-primary"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-grow-1 ms-3">
+                                                    <h6 class="mb-1 fw-semibold">{{ formation.titre }}</h6>
+                                                    <small class="text-muted">
+                                                        {{ formation.domaine|default:"Non spécifié" }}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                {% if formation.formateur.photo %}
+                                                <img src="{{ formation.formateur.photo.url }}" 
+                                                     alt="{{ formation.formateur.get_full_name }}"
+                                                     class="rounded-circle me-2" width="32" height="32"
+                                                     style="object-fit: cover;">
+                                                {% else %}
+                                                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-2" 
+                                                     style="width: 32px; height: 32px;">
+                                                    <span class="text-white small">
+                                                        {{ formation.formateur.get_full_name|first|upper }}
+                                                    </span>
+                                                </div>
+                                                {% endif %}
+                                                <div>
+                                                    <div class="fw-medium">{{ formation.formateur.get_full_name }}</div>
+                                                    <small class="text-muted">{{ formation.formateur.specialite|default:"" }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-nowrap">
+                                                <div class="fw-semibold">{{ formation.date_debut|date:"d/m/Y" }}</div>
+                                                <small class="text-muted">au {{ formation.date_fin|date:"d/m/Y" }}</small>
+                                            </div>
+                                            {% if formation.est_en_cours %}
+                                            <span class="badge bg-warning bg-opacity-20 text-warning small">
+                                                <i class="bi bi-clock me-1"></i>En cours
+                                            </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <span class="fw-semibold">
+                                                    {% if formation.nb_inscrits %}
+                                                        {{ formation.nb_inscrits }}
+                                                    {% else %}
+                                                        0
+                                                    {% endif %}
+                                                </span>
+                                                <span class="text-muted">/{{ formation.capacite }}</span>
+                                            </div>
+                                            <small class="text-muted">
+                                                {% if formation.places_disponibles %}
+                                                    {{ formation.places_disponibles }} place(s) libre(s)
+                                                {% else %}
+                                                    Complète
+                                                {% endif %}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <span class="badge 
+                                                {% if formation.statut == 'PROGRAMMEE' %}bg-primary
+                                                {% elif formation.statut == 'EN_COURS' %}bg-warning
+                                                {% elif formation.statut == 'TERMINEE' %}bg-success
+                                                {% elif formation.statut == 'ANNULEE' %}bg-secondary
+                                                {% endif %}">
+                                                <i class="bi 
+                                                    {% if formation.statut == 'PROGRAMMEE' %}bi-calendar-check
+                                                    {% elif formation.statut == 'EN_COURS' %}bi-play-circle
+                                                    {% elif formation.statut == 'TERMINEE' %}bi-check-circle
+                                                    {% elif formation.statut == 'ANNULEE' %}bi-x-circle
+                                                    {% endif %} me-1"></i>
+                                                {{ formation.get_statut_display }}
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="btn-group">
+                                                <a href="{% url 'detail_formation' formation.pk %}" 
+                                                   class="btn btn-sm btn-outline-primary"
+                                                   data-bs-toggle="tooltip" title="Voir les détails">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                {% if not user.employe.role == 'RH' %}
+                                                    <a href="{% url 'demander_conge' %}" class="btn btn-sm btn-success"
+                                                       data-bs-toggle="tooltip" title="Demander un congé">
+                                                        <i class="bi bi-calendar-plus"></i>
+                                                    </a>
+                                                {% endif %}
+                                                {% if user.employe.role == 'RH' %}
+                                                    <a href="{% url 'modifier_formation' formation.pk %}"
+                                                       class="btn btn-sm btn-outline-warning"
+                                                       data-bs-toggle="tooltip" title="Modifier">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <a href="{% url 'supprimer_formation' formation.pk %}"
+                                                       class="btn btn-sm btn-outline-danger"
+                                                       data-bs-toggle="tooltip" title="Supprimer">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <div class="mb-4">
+                                <i class="bi bi-journal-x display-1 text-muted"></i>
+                            </div>
+                            <h5 class="text-muted">Aucune formation trouvée</h5>
+                            <p class="text-muted mb-4">Commencez par créer votre première formation</p>
+                            <a href="{% url 'ajouter_formation' %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-2"></i>Créer une formation
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Pied de tableau avec pagination -->
+                {% if formations and formations.paginator.num_pages > 1 %}
+                <div class="card-footer bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-muted small">
+                            Affichage de {{ formations.start_index }} à {{ formations.end_index }} 
+                            sur {{ formations.paginator.count }} formation(s)
+                        </div>
+                        <nav aria-label="Navigation des pages">
+                            <ul class="pagination pagination-sm mb-0">
+                                {% if formations.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ formations.previous_page_number }}">Précédent</a>
+                                </li>
+                                {% endif %}
+                                
+                                {% for num in formations.paginator.page_range %}
+                                    {% if formations.number == num %}
+                                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                    {% else %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if formations.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ formations.next_page_number }}">Suivant</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Styles personnalisés -->
+<!-- Modal d'inscription global (ouvre la liste des formations disponibles) -->
+<div class="modal fade" id="inscriptionModal" tabindex="-1" aria-labelledby="inscriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inscriptionModalLabel">S'inscrire à une formation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <div id="inscription-list" class="list-group">
+                    {% for f in formations %}
+                        {% if f.places_disponibles > 0 and f.statut == 'PROGRAMMEE' %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center formation-item">
+                            <div>
+                                <div class="fw-semibold">{{ f.titre }}</div>
+                                <small class="text-muted">{{ f.date_debut|date:"d/m/Y" }} au {{ f.date_fin|date:"d/m/Y" }} — {{ f.places_disponibles }} place(s) libre(s)</small>
+                            </div>
+                            <div>
+                                <a href="{% url 'inscrire_formation' f.pk %}" class="btn btn-sm btn-success">S'inscrire</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div id="no-available" class="text-center py-4 d-none">
+                    <p class="mb-0 text-muted">Aucune formation ouverte à l'inscription pour le moment.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var inscriptionModal = document.getElementById('inscriptionModal');
+    if (inscriptionModal) {
+        inscriptionModal.addEventListener('show.bs.modal', function (event) {
+            var items = inscriptionModal.querySelectorAll('.formation-item');
+            var noneMessage = document.getElementById('no-available');
+            if (items.length === 0) {
+                noneMessage.classList.remove('d-none');
+            } else {
+                noneMessage.classList.add('d-none');
+            }
+        });
+    }
+});
+</script>
+<style>
+.card {
+    border: none;
+    border-radius: 12px;
+}
+.table th {
+    border-top: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+}
+.table td {
+    vertical-align: middle;
+    padding: 1rem 0.75rem;
+}
+.badge {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+}
+</style>
+
+<!-- Script pour les tooltips -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+});
+</script>
 {% endblock %}

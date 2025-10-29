@@ -1,15 +1,421 @@
 {% extends 'base.html' %}
-{% block title %}Détail employé{% endblock %}
+{% load static %}
+
+{% block title %}{{ employe_obj.get_full_name }} - {{ employe_obj.poste }} | {{ employe_obj.departement }}{% endblock %}
+
 {% block content %}
 <div class="container py-4">
-    <h2>{{ employe_obj.get_full_name }}</h2>
-    <div class="card mb-3">
-        <div class="card-body">
-            <p><strong>Matricule:</strong> {{ employe_obj.matricule }}</p>
-            <p><strong>Email:</strong> {{ employe_obj.email }}</p>
-            <p><strong>Poste:</strong> {{ employe_obj.poste }}</p>
-            <p><strong>Département:</strong> {{ employe_obj.departement }}</p>
+    <!-- En-tête avec photo de profil -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="d-flex align-items-center">
+                <div class="position-relative">
+                    {% if employe_obj.photo %}
+                    <img src="{{ employe_obj.photo.url }}" alt="{{ employe_obj.get_full_name }}" 
+                         class="rounded-circle me-4 border border-4 border-primary" width="120" height="120"
+                         style="object-fit: cover;">
+                    {% else %}
+                    <div class="bg-gradient-primary rounded-circle d-flex align-items-center justify-content-center me-4" 
+                         style="width: 120px; height: 120px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <span class="text-white fw-bold fs-2">{{ employe_obj.get_full_name|first|upper }}</span>
+                    </div>
+                    {% endif %}
+                    {% if employe_obj.actif %}
+                    <span class="position-absolute bottom-0 start-0 bg-success rounded-circle border border-3 border-white"
+                          style="width: 20px; height: 20px;" title="Employé actif"></span>
+                    {% endif %}
+                </div>
+                <div>
+                    <h1 class="h2 mb-2 fw-bold text-dark">{{ employe_obj.get_full_name }}</h1>
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <span class="badge bg-primary fs-6 fw-normal">{{ employe_obj.poste }}</span>
+                        <span class="badge bg-light text-dark fs-6 fw-normal">
+                            <i class="bi bi-building me-1"></i>{{ employe_obj.departement }}
+                        </span>
+                        {% if employe_obj.date_embauche %}
+                        <span class="text-muted fs-6">
+                            <i class="bi bi-calendar3 me-1"></i>Depuis {{ employe_obj.date_embauche|date:"Y" }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-md-end d-flex align-items-start justify-content-end gap-2">
+            <div class="btn-group">
+                <a href="{% url 'modifier_employe' employe_obj.id %}" class="btn btn-primary">
+                    <i class="bi bi-pencil-square me-2"></i>Modifier
+                </a>
+                <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" 
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">Actions</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="mailto:{{ employe_obj.email }}">
+                        <i class="bi bi-envelope me-2"></i>Envoyer un email
+                    </a></li>
+                    {% if employe_obj.telephone %}
+                    <li><a class="dropdown-item" href="tel:{{ employe_obj.telephone }}">
+                        <i class="bi bi-telephone me-2"></i>Appeler
+                    </a></li>
+                    {% endif %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-warning" href="#">
+                        <i class="bi bi-clock-history me-2"></i>Voir les congés
+                    </a></li>
+                    <li><a class="dropdown-item text-info" href="#">
+                        <i class="bi bi-graph-up me-2"></i>Performance
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Informations principales -->
+        <div class="col-lg-8">
+            <!-- Carte Informations personnelles -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-person-vcard me-2"></i>Informations personnelles
+                    </h5>
+                    <span class="badge bg-secondary">Identité</span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <label class="form-label text-muted small mb-1">Matricule</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-badge text-primary me-2"></i>
+                                    <span class="fw-semibold">{{ employe_obj.matricule }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item mb-3">
+                                <label class="form-label text-muted small mb-1">Email professionnel</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-envelope text-primary me-2"></i>
+                                    <a href="mailto:{{ employe_obj.email }}" class="text-decoration-none text-dark">
+                                        {{ employe_obj.email }}
+                                    </a>
+                                </div>
+                            </div>
+
+                            {% if employe_obj.date_naissance %}
+                            <div class="info-item mb-3">
+                                <label class="form-label text-muted small mb-1">Date de naissance</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-balloon text-primary me-2"></i>
+                                    <span>{{ employe_obj.date_naissance|date:"d/m/Y" }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <label class="form-label text-muted small mb-1">Département</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-building text-primary me-2"></i>
+                                    <span>{{ employe_obj.departement }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item mb-3">
+                                <label class="form-label text-muted small mb-1">Téléphone</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-telephone text-primary me-2"></i>
+                                    {% if employe_obj.telephone %}
+                                    <a href="tel:{{ employe_obj.telephone }}" class="text-decoration-none text-dark">
+                                        {{ employe_obj.telephone }}
+                                    </a>
+                                    {% else %}
+                                    <span class="text-muted">Non renseigné</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            {% if employe_obj.adresse %}
+                            <div class="info-item mb-3">
+                                <label class="form-label text-muted small mb-1">Adresse</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-geo-alt text-primary me-2"></i>
+                                    <span>{{ employe_obj.adresse }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations professionnelles -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-briefcase me-2"></i>Informations professionnelles
+                    </h5>
+                    <span class="badge bg-secondary">Carrière</span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% if employe_obj.date_embauche %}
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <label class="form-label text-muted small mb-1">Date d'embauche</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-calendar-check text-success me-2"></i>
+                                    <span>{{ employe_obj.date_embauche|date:"d/m/Y" }}</span>
+                                    <small class="text-muted ms-2">
+                                        ({{ employe_obj.date_embauche|timesince }})
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if employe_obj.manager %}
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <label class="form-label text-muted small mb-1">Manager</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-gear text-warning me-2"></i>
+                                    <a href="{% url 'detail_employe' employe_obj.manager.id %}" 
+                                       class="text-decoration-none text-dark">
+                                        {{ employe_obj.manager.get_full_name }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if employe_obj.salaire %}
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <label class="form-label text-muted small mb-1">Salaire</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-currency-euro text-success me-2"></i>
+                                    <span>{{ employe_obj.salaire }} €</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if employe_obj.type_contrat %}
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <label class="form-label text-muted small mb-1">Type de contrat</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-file-text text-info me-2"></i>
+                                    <span class="badge bg-info">{{ employe_obj.type_contrat }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compétences et spécialités -->
+            {% if employe_obj.competences %}
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-tools me-2"></i>Compétences & Spécialités
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for competence in employe_obj.competences_list %}
+                        <span class="badge bg-light text-dark border border-1">
+                            <i class="bi bi-check-circle text-success me-1"></i>{{ competence }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar avec statistiques et actions -->
+        <div class="col-lg-4">
+            <!-- Statut et métriques -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-graph-up me-2"></i>Statut & Métriques
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        {% if employe_obj.actif %}
+                        <div class="status-indicator bg-success rounded-circle mx-auto mb-2"
+                             style="width: 16px; height: 16px;"></div>
+                        <span class="badge bg-success fs-6 p-2">Actif</span>
+                        {% else %}
+                        <div class="status-indicator bg-secondary rounded-circle mx-auto mb-2"
+                             style="width: 16px; height: 16px;"></div>
+                        <span class="badge bg-secondary fs-6 p-2">Inactif</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="metrics">
+                        <div class="metric-item d-flex justify-content-between align-items-center py-2 border-bottom">
+                            <span class="text-muted">Ancienneté</span>
+                            <span class="fw-semibold">
+                                {% if employe_obj.date_embauche %}
+                                {{ employe_obj.date_embauche|timesince }}
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="metric-item d-flex justify-content-between align-items-center py-2 border-bottom">
+                            <span class="text-muted">Profil complet</span>
+                            <span class="fw-semibold">
+                                {% widthratio employe_obj.profile_completion 1 100 %}%
+                            </span>
+                        </div>
+                        <div class="metric-item d-flex justify-content-between align-items-center py-2">
+                            <span class="text-muted">Dernière mise à jour</span>
+                            <span class="fw-semibold">{{ employe_obj.date_modification|date:"d/m/Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Équipe et contacts -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-people me-2"></i>Équipe
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if employe_obj.equipe_members %}
+                    <div class="team-members">
+                        <h6 class="text-muted mb-3">Membres de l'équipe ({{ employe_obj.equipe_members.count }})</h6>
+                        {% for member in employe_obj.equipe_members.all|slice:":5" %}
+                        <div class="d-flex align-items-center mb-2">
+                            {% if member.photo %}
+                            <img src="{{ member.photo.url }}" alt="{{ member.get_full_name }}" 
+                                 class="rounded-circle me-2" width="32" height="32"
+                                 style="object-fit: cover;">
+                            {% else %}
+                            <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-2" 
+                                 style="width: 32px; height: 32px;">
+                                <span class="text-white small">{{ member.get_full_name|first|upper }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="flex-grow-1">
+                                <div class="fw-medium small">{{ member.get_full_name }}</div>
+                                <div class="text-muted extra-small">{{ member.poste }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center mb-0">Aucun membre d'équipe</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Actions rapides -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-lightning me-2"></i>Actions rapides
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="mailto:{{ employe_obj.email }}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-envelope me-1"></i> Envoyer un email
+                        </a>
+                        {% if employe_obj.telephone %}
+                        <a href="tel:{{ employe_obj.telephone }}" class="btn btn-outline-success btn-sm">
+                            <i class="bi bi-telephone me-1"></i> Appeler
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'modifier_employe' employe_obj.id %}" class="btn btn-outline-warning btn-sm">
+                            <i class="bi bi-pencil me-1"></i> Modifier profil
+                        </a>
+                        <button class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#exportModal">
+                            <i class="bi bi-download me-1"></i> Exporter
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Modal d'export -->
+<div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exportModalLabel">Exporter le profil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Choisissez le format d'export :</p>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary">
+                        <i class="bi bi-filetype-pdf me-2"></i>PDF
+                    </button>
+                    <button class="btn btn-outline-success">
+                        <i class="bi bi-filetype-doc me-2"></i>Word
+                    </button>
+                    <button class="btn btn-outline-secondary">
+                        <i class="bi bi-filetype-csv me-2"></i>CSV
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    border-radius: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+}
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+    border-bottom: 1px solid #e9ecef;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+.info-item {
+    padding: 8px 0;
+}
+.metric-item:last-child {
+    border-bottom: none !important;
+}
+.badge {
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+.status-indicator {
+    animation: pulse 2s infinite;
+}
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+.extra-small {
+    font-size: 0.75rem;
+}
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+</style>
 {% endblock %}

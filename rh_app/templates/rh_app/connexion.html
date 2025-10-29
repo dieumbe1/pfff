@@ -1,46 +1,400 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Connexion - Gestion RH{% endblock %}
 
+{% block extra_css %}
+<style>
+    .login-section {
+        min-height: 100vh;
+        background: url("{% static 'images/login-bg.jpg' %}") center/cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 
+            0 20px 40px rgba(0, 0, 0, 0.15),
+            0 0 0 1px rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+        position: relative;
+        z-index: 2;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .login-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 
+            0 25px 50px rgba(0, 0, 0, 0.2),
+            0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    .login-icon {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-icon::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+        transform: rotate(45deg);
+        animation: shine 3s infinite;
+    }
+
+    .login-icon i {
+        font-size: 2.5rem;
+        color: white;
+        position: relative;
+        z-index: 2;
+    }
+
+    .form-floating {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-floating label {
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .form-control {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #ffffff;
+    }
+
+    .form-control:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        background: #ffffff;
+    }
+
+    .form-control-lg {
+        padding: 1.25rem 1.5rem;
+        font-size: 1.1rem;
+    }
+
+    .btn-login {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        border: none;
+        border-radius: 12px;
+        padding: 1.25rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 35px rgba(37, 99, 235, 0.4);
+        color: white;
+    }
+
+    .btn-login::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn-login:hover::before {
+        left: 100%;
+    }
+
+    .back-link {
+        color: #64748b;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .back-link:hover {
+        color: #2563eb;
+        transform: translateX(-5px);
+    }
+
+    .floating-shapes {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .shape {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .shape:nth-child(1) {
+        width: 60px;
+        height: 60px;
+        top: 20%;
+        left: 10%;
+        animation-delay: 0s;
+    }
+
+    .shape:nth-child(2) {
+        width: 100px;
+        height: 100px;
+        top: 10%;
+        right: 15%;
+        animation-delay: 2s;
+    }
+
+    .shape:nth-child(3) {
+        width: 80px;
+        height: 80px;
+        bottom: 15%;
+        left: 20%;
+        animation-delay: 4s;
+    }
+
+    .shape:nth-child(4) {
+        width: 120px;
+        height: 120px;
+        bottom: 10%;
+        right: 10%;
+        animation-delay: 1s;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #64748b;
+        cursor: pointer;
+        z-index: 3;
+    }
+
+    .password-toggle:hover {
+        color: #2563eb;
+    }
+
+    .alert-auth {
+        border-radius: 12px;
+        border: none;
+        background: linear-gradient(135deg, #fef3c7, #fef7ed);
+        border-left: 4px solid #f59e0b;
+        color: #92400e;
+    }
+
+    /* Animation d'entrée */
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-slide-in {
+        animation: slideInUp 0.6s ease-out;
+    }
+
+    /* Animation shine pour l'icône */
+    @keyframes shine {
+        0% { transform: rotate(45deg) translateX(-100%); }
+        100% { transform: rotate(45deg) translateX(100%); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .login-card {
+            margin: 1rem;
+            padding: 2rem !important;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="min-vh-100 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<div class="login-section">
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-5">
-                <div class="card p-4">
-                    <div class="card-body">
-                        <div class="text-center mb-4">
-                            <i class="bi bi-person-lock" style="font-size: 3rem; color: #2563eb;"></i>
-                            <h2 class="mt-3">Connexion</h2>
-                            <p class="text-muted">Accédez à votre espace RH</p>
+            <div class="col-md-6 col-lg-5">
+                <div class="login-card p-5 animate-slide-in">
+                    <div class="text-center mb-4">
+                        <div class="login-icon">
+                            <i class="bi bi-person-lock-fill"></i>
                         </div>
+                        <h2 class="fw-bold text-dark mb-2">Connexion</h2>
+                        <p class="text-muted">Accédez à votre espace RH</p>
+                    </div>
+
+                    {% if form.errors %}
+                    <div class="alert alert-auth alert-dismissible fade show" role="alert">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <div>Identifiant ou mot de passe incorrect.</div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endif %}
+
+                    <form method="post" class="mb-4">
+                        {% csrf_token %}
                         
-                        <form method="post">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <label for="{{ form.username.id_for_label }}" class="form-label">{{ form.username.label }}</label>
-                                {{ form.username }}
-                            </div>
-                            <div class="mb-4">
-                                <label for="{{ form.password.id_for_label }}" class="form-label">{{ form.password.label }}</label>
-                                {{ form.password }}
-                            </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="bi bi-box-arrow-in-right"></i> Se connecter
-                                </button>
-                            </div>
-                        </form>
-                        
-                        <div class="text-center mt-3">
-                            <a href="{% url 'accueil' %}" class="text-decoration-none">
-                                <i class="bi bi-arrow-left"></i> Retour à l'accueil
+                        <div class="form-floating">
+                            {{ form.username }}
+                            <label for="{{ form.username.id_for_label }}">
+                                <i class="bi bi-person me-2"></i>{{ form.username.label }}
+                            </label>
+                        </div>
+
+                        <div class="form-floating position-relative">
+                            {{ form.password }}
+                            <label for="{{ form.password.id_for_label }}">
+                                <i class="bi bi-lock me-2"></i>{{ form.password.label }}
+                            </label>
+                            <button type="button" class="password-toggle" id="passwordToggle">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-login">
+                                <i class="bi bi-box-arrow-in-right me-2"></i> Se connecter
+                            </button>
+                        </div>
+
+                        <div class="text-center">
+                            <a href="#" class="text-decoration-none text-muted">
+                                <i class="bi bi-question-circle me-1"></i> Mot de passe oublié ?
                             </a>
                         </div>
+                    </form>
+
+                    <div class="text-center">
+                        <p class="text-muted mb-0">
+                            Nouveau sur la plateforme ?
+                            <a href="{% url 'inscription' %}" class="text-primary text-decoration-none fw-bold">
+                                Créer un compte
+                            </a>
+                        </p>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <a href="{% url 'accueil' %}" class="back-link">
+                            <i class="bi bi-arrow-left"></i> Retour à l'accueil
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Amélioration des champs de formulaire
+        const usernameField = document.getElementById('{{ form.username.id_for_label }}');
+        const passwordField = document.getElementById('{{ form.password.id_for_label }}');
+        
+        if (usernameField) {
+            usernameField.className = 'form-control form-control-lg';
+            usernameField.placeholder = '';
+        }
+        
+        if (passwordField) {
+            passwordField.className = 'form-control form-control-lg';
+            passwordField.placeholder = '';
+        }
+
+        // Toggle mot de passe
+        const passwordToggle = document.getElementById('passwordToggle');
+        if (passwordToggle && passwordField) {
+            passwordToggle.addEventListener('click', function() {
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+            });
+        }
+
+        // Animation des champs au focus
+        const formControls = document.querySelectorAll('.form-control');
+        formControls.forEach(control => {
+            control.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            control.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.parentElement.classList.remove('focused');
+                }
+            });
+        });
+
+        // Effet de saisie en temps réel
+        formControls.forEach(control => {
+            control.addEventListener('input', function() {
+                if (this.value) {
+                    this.style.background = '#f8fafc';
+                } else {
+                    this.style.background = '#ffffff';
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}
