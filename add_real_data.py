@@ -101,7 +101,7 @@ def create_users_and_employees():
                 'email': emp_data['email'],
                 'first_name': emp_data['first_name'],
                 'last_name': emp_data['last_name'],
-                'password': 'motdepasse123'  # À changer en production
+                'password': 'isep'  # Mot de passe demandé
             }
         )
 
@@ -243,11 +243,11 @@ def main():
 
         print("\nToutes les données ont été créées avec succès!")
         print("\nComptes utilisateurs créés:")
-        print("- marie.louise / motdepasse123 (RH)")
-        print("- adama.ngom / motdepasse123 (Employé)")
-        print("- dieumbe.diop / motdepasse123 (Employé)")
-        print("- daba.ndour / motdepasse123 (Employé)")
-        print("- aminata.diop / motdepasse123 (Employé)")
+        print("- marie.louise / isep (RH)")
+        print("- adama.ngom / isep (Employé)")
+        print("- dieumbe.diop / isep (Employé)")
+        print("- daba.ndour / isep (Employé)")
+        print("- aminata.diop / isep (Employé)")
 
     except Exception as e:
         print(f"Erreur lors de la création des données: {e}")
