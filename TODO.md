@@ -23,11 +23,11 @@
 ## 🔄 État actuel
 
 ### Comptes de test disponibles
-- **marie.louise** / motdepasse123 (Responsable RH)
-- **adama.ngom** / motdepasse123 (Employé - Informatique)
-- **dieumbe.diop** / motdepasse123 (Employé - Comptabilité)
-- **daba.ndour** / motdepasse123 (Employé - Formation)
-- **aminata.diop** / motdepasse123 (Employé - Administration)
+- **marie.louise** / isep (Responsable RH)
+- **adama.ngom** / isep (Employé - Informatique)
+- **dieumbe.diop** / isep (Employé - Comptabilité)
+- **daba.ndour** / isep (Employé - Formation)
+- **aminata.diop** / isep (Employé - Administration)
 - **admin** / (mot de passe à définir) (Superutilisateur)
 
 ### Fonctionnalités disponibles
