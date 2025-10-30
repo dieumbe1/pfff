@@ -61,10 +61,10 @@
                                 <td>
                                     {% if conge.statut == 'EN_ATTENTE' %}
                                         <a href="{% url 'traiter_conge' conge.pk %}" class="btn btn-sm btn-primary">
-                                            Traiter
+                                            <i class="bi bi-check-circle"></i> Traiter
                                         </a>
                                     {% else %}
-                                        <em>--</em>
+                                        <span class="text-muted">--</span>
                                     {% endif %}
                                 </td>
                             {% endif %}
